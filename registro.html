@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Atlas Tours – Registro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/img/icon.png">
+
+</head>
+<body>
+    <section class="seccion-login">
+        <div class="container">
+            <div class="login-bienvenida">
+                <h1 class="titulo-animado">Atlas Tours VIP</h1>
+                <p class="texto-bienvenida">Vive una experiencia exclusiva en transporte y turismo premium.
+                    Regístrate y disfruta viajes de lujo, seguridad y confort total.</p>
+                <a href="empresa.html" class="btn"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+            </div>
+
+            <div class="login-formulario crear-cuenta">
+                <h2 class="titulo-form">Crear Cuenta</h2>
+
+                <form id="formRegistro">
+                    <input type="hidden" name="formulario" value="registro">
+
+                    <div class="row">
+                        <div class="col">
+                            <label>Tipo de Identificación <span>*</span></label>
+                            <select name="tipo_id" id="tipo_id" required>
+                                <option value="">Cargando...</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Número de Identificación <span>*</span></label>
+                            <input type="text" name="identificacion" placeholder="Ingrese su identificación" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <label>Nombre <span>*</span></label>
+                            <input type="text" name="nombre" placeholder="Ingrese su nombre" required>
+                        </div>
+                        <div class="col">
+                            <label>Apellido <span>*</span></label>
+                            <input type="text" name="apellido" placeholder="Ingrese su apellido" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <label>Correo Electrónico <span>*</span></label>
+                            <input type="email" name="correo" placeholder="Ingrese su correo" required>
+                        </div>
+                        <div class="col">
+                            <label>Teléfono</label>
+                            <input type="tel" name="telefono" placeholder="Ingrese su teléfono">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <label>Contraseña <span>*</span></label>
+                            <input type="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                        </div>
+                    </div>
+
+                    <button class="btn" type="submit" id="btnRegistro">Registrarme</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast de notificación -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+      function mostrarToast(html, tipo) {
+        const toast = document.getElementById('toast');
+        toast.innerHTML = html;
+        toast.className = 'toast ' + tipo;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 4000);
+      }
+
+      // Cargar tipos de documento desde Base_De_Datos.php
+      fetch('Base_De_Datos.php?accion=tipo_documento')
+        .then(res => res.json())
+        .then(data => {
+          const select = document.getElementById('tipo_id');
+          select.innerHTML = '<option value="">Seleccione</option>';
+          data.forEach(doc => {
+            const opt = document.createElement('option');
+            opt.value = doc.id_tipo_documento;
+            opt.textContent = doc.tipo;
+            select.appendChild(opt);
+          });
+        })
+        .catch(() => {
+          document.getElementById('tipo_id').innerHTML = '<option value="">Error al cargar</option>';
+        });
+
+      // Enviar formulario de registro
+      document.getElementById('formRegistro').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnRegistro');
+        btn.disabled = true;
+        btn.textContent = 'Registrando...';
+
+        fetch('Base_De_Datos.php', { method: 'POST', body: new FormData(this) })
+          .then(res => res.text())
+          .then(respuesta => {
+            if (respuesta.includes('✅')) {
+              mostrarToast('✅ ¡Registro exitoso! Ya puedes iniciar sesión.', 'exito');
+              document.getElementById('formRegistro').reset();
+              document.getElementById('tipo_id').selectedIndex = 0;
+              // Redirige a login después de 2 segundos
+              setTimeout(() => { window.location.href = 'empresa.html'; }, 2000);
+            } else {
+              mostrarToast(respuesta.replace(/<[^>]*>/g, ''), 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Registrarme';
+          })
+          .catch(() => {
+            mostrarToast('❌ Error de conexión. Intenta de nuevo.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Registrarme';
+          });
+      });
+    </script>
+</body>
+</html>

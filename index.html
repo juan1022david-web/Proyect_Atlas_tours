@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Atlas Tours</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/css/estilos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" />
+
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <ul>
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+          <li><a href="destinos.html">Destinos</a></li>
+          <li><a href="vehiculos.html">Vehículos</a></li>
+          <li><a href="empresa.html" class="activo"><i class="fa-solid fa-user"></i></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="home banner-hero" id="inicio" style="background-image: url(https://i.redd.it/hegu9sm2fo6b1.jpg);">
+      <div class="container">
+        <div class="txt">
+          <h1>ATLAS <span>TOURS</span></h1>
+          <div class="parrafo">
+            <strong>Movilidad que conecta experiencias, negocios y destinos</strong>
+            <p>Desde traslados corporativos hasta experiencias turísticas y servicios hoteleros, trabajamos para que cada recorrido se adapte a las necesidades de nuestros clientes, garantizando confianza, cobertura y excelencia en cada viaje.</p>
+            <p class="italic"><i class="fa-solid fa-star"></i>Más que transporte, creamos conexiones que impulsan experiencias.</p>
+          </div>
+          <a href="cotizar.html" class="btn active b">COTIZA TU SERVICIO</a>
+        </div>
+        <div class="content-logo">
+          <img src="assets/img/logo 2.png" alt="">
+        </div>
+      </div>
+    </section>
+
+    <section class="home mensaje">
+      <div class="container">
+        <marquee behavior="scroll" direction="left">
+          <div class="flex">
+            <p>ALGUNOS LUGARES</p>
+            <i class="fa-solid fa-bus"></i>
+            <p>VILLA DE LEYVA</p>
+            <i class="fa-solid fa-bus"></i>
+            <p>ZIPAQUIRA</p>
+            <i class="fa-solid fa-bus"></i>
+            <p>NEIVA</p>
+            <i class="fa-solid fa-bus"></i>
+            <p>PASTO</p>
+            <i class="fa-solid fa-bus"></i>
+            <p>MEDELLIN</p>
+            <i class="fa-solid fa-bus"></i>
+            <p>Y MUCHOS MAS</p>
+          </div>
+        </marquee>
+      </div>
+    </section>
+
+    <section class="home servicios" id="servicios">
+      <div class="container">
+        <div class="contenedor-texto">
+          <div class="contenedor-boder">
+            <div class="be-border"></div>
+            <h3>NUESTROS SERVICIOS</h3>
+          </div>
+          <h2>Empresa líder en el sector hotelero y empresarial</h2>
+        </div>
+        <div class="contenedor">
+          <div class="caja" style="background-image: url(https://aglvans.com/wp-content/uploads/2021/02/tommaso-pecchioli-03nt4WmL1Kk-unsplash-scaled.jpg);">
+            <div class="texto">
+              <h2>Servicio Hotelero</h2>
+              <p>Contamos con una estructura logística, apoyada desde la central de reservas y los coordinadores de base garantizando disponibilidad inmediata de vehículos en los hoteles afiliados a nuestra red.</p>
+              <a class="btn" href="cotizar.html">Cotizar</a>
+            </div>
+          </div>
+          <div class="caja" style="background-image: url(https://aglvans.com/wp-content/uploads/2021/02/ryan-tang-HrBNsh-wzN8-unsplash-scaled.jpg);">
+            <div class="texto">
+              <h2>Servicio Empresarial</h2>
+              <p>Ofrecemos una solución de movilidad a sus representantes para el éxito de sus visitas de negocio, los trasladamos desde diferentes puntos a nivel urbano y rural, ayudando al cumplimiento de los tiempos de sus citas.</p>
+              <a class="btn" href="cotizar.html">Cotizar</a>
+            </div>
+          </div>
+          <div class="caja" style="background-image: url(https://aglvans.com/wp-content/uploads/2021/02/jimmy-conover-3CTuFxZBra0-unsplash-scaled.jpg);">
+            <div class="texto">
+              <h2>Servicio Turístico</h2>
+              <p>Contamos con una estructura logística, apoyada desde la central de reservas y los coordinadores de base garantizando disponibilidad inmediata de vehículos en los hoteles afiliados a nuestra red.</p>
+              <a class="btn" href="cotizar.html">Cotizar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-form" id="contacto">
+      <div class="container">
+        <div class="contenedor-texto">
+          <div class="contenedor-boder">
+            <div class="be-border"></div>
+            <h3>CONTACTANOS</h3>
+          </div>
+          <p>Comunicarte con nosotros es más que un mensaje: es el comienzo de una gran ayuda.</p>
+        </div>
+
+        <form id="formContacto">
+          <input type="hidden" name="formulario" value="contacto">
+          <div class="row">
+            <div class="col">
+              <label for="primer_nombre">Primer Nombre <span>*</span></label>
+              <input type="text" id="primer_nombre" name="primer_nombre" required>
+            </div>
+            <div class="col">
+              <label for="segundo_nombre">Segundo Nombre</label>
+              <input type="text" id="segundo_nombre" name="segundo_nombre">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="primer_apellido">Primer Apellido <span>*</span></label>
+              <input type="text" id="primer_apellido" name="primer_apellido" required>
+            </div>
+            <div class="col">
+              <label for="segundo_apellido">Segundo Apellido</label>
+              <input type="text" id="segundo_apellido" name="segundo_apellido">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="correo">Correo electrónico <span>*</span></label>
+              <input type="email" id="correo" name="correo" required>
+            </div>
+            <div class="col">
+              <label for="telefono">Teléfono <span>*</span></label>
+              <input type="tel" id="telefono" name="telefono" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="asunto">Asunto <span>*</span></label>
+              <input type="text" id="asunto" name="asunto" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="mensaje">Mensaje <span>*</span></label>
+              <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+            </div>
+          </div>
+          <button class="btn" type="submit" id="btnContacto">Enviar</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2025 AtlasTours | Todos los derechos reservados.</p>
+      <div class="redes">
+        <a href="https://www.instagram.com/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="https://wa.me/message/EHEM3HUWAFZDL1" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/message/EHEM3HUWAFZDL1" class="whatsapp-float" target="_blank" title="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- Toast de notificación -->
+  <div id="toast" class="toast"></div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    function mostrarToast(html, tipo) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = html;
+      toast.className = 'toast ' + tipo;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    }
+
+    document.getElementById('formContacto').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnContacto');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      fetch('Base_De_Datos.php', { method: 'POST', body: new FormData(this) })
+        .then(res => res.text())
+        .then(respuesta => {
+          if (respuesta.includes('✅')) {
+            mostrarToast('✅ ¡Mensaje enviado! Te responderemos pronto.', 'exito');
+            document.getElementById('formContacto').reset();
+          } else {
+            mostrarToast(respuesta, 'error');
+          }
+          btn.disabled = false;
+          btn.textContent = 'Enviar';
+        })
+        .catch(() => {
+          mostrarToast('❌ Error de conexión. Intenta de nuevo.', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Enviar';
+        });
+    });
+  </script>
+</body>
+</html>

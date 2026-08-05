@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+  <title>Atlas Tours</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/css/estilos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" />
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="index.html">Servicios</a></li>
+          <li><a href="index.html">Contacto</a></li>
+          <li><a href="destinos.html">Destinos</a></li>
+          <li><a href="vehiculos.html">Vehículos</a></li>
+          <li><a href="empresa.html" class="activo"><i class="fa-solid fa-user"></i></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="home destinos" id="destinos">
+      <div class="container">
+        <div class="content-text">
+          <h1>Explora nuestros destinos</h1>
+          <p>Cada destino es una nueva experiencia por descubrir. Te llevamos a lugares emblemáticos de Colombia con
+            servicios de transporte confiables, cómodos y pensados para que disfrutes cada momento del viaje.</p>
+        </div>
+
+        <div class="contenedor-cuadricula">
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img src="https://mediaim.expedia.com/destination/1/aea1a89ec1f2cf2742d6b30fc85eb88b.jpg" alt="Imagen 1">
+            </div>
+            <div class="titulo">
+              <h3>VILLA DE LEYVA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="villa-de-leyva">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://files.visitbogota.co/sites/default/files/2025-03/Zipaquira%CC%81%20%281%29%20%281%29_2.jpg"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>ZIPAQUIRA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="zipaquira">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="data:image/jpeg;base64,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"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>NEIVA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="neiva">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://www.turismopasto.com/wp-content/uploads/2018/03/santuario-hermoso-del-mundo-las-lajas-turismo-ipiales-colombia.jpg"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>PASTO</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="pasto">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://st2.depositphotos.com/15113232/47181/i/450/depositphotos_471812596-stock-photo-centro-medelln-coltejer-noche-area.jpg"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>MEDELLIN</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="medellin">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img src="https://www.flotamagdalena.com/wp-content/uploads/riosucio-img.jpeg" alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>RIO SUCIO</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="rio-sucio">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://i0.wp.com/ciudadregion.com/uploads/2023/10/cartago-foto-cazador-de-paisajes.jpg?fit=1280%2C853&ssl=1"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>CARTAGO</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="cartago">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/d5/c0/35/img-20190416-wa0029-largejpg.jpg?w=900&h=500&s=1"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>POPAYAN</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="popayan">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img src="https://visitvalle.travel/wp-content/uploads/2024/11/cruz.webp" alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>SEVILLA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="sevilla">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img src="https://images.mnstatic.com/a6/7c/a67c75e8996acf5638984fb4cb790904.jpg" alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>PEREIRA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="pereira">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://www.tomplanmytrip.com/wp-content/uploads/2020/04/Getsemani-Cartagena-Colombia-Eastern-Caribbean-Coast.jpg"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>CARTAGENA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="cartagena">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img src="https://panoramacultural.com.co/media/images/articulos/2021/10/12060256.jpg" alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>VALLEDUPAR</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="valledupar">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://imagescdn.citix.com.co/citix/production/tours/4c3f0363-efb0-485e-a4ba-589f7f0b370e/19424f4e874d0c380fe44dcb5157f4fa.jpg"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>BOGOTA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="bogota">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img
+                src="https://smhttp-ssl-53207-colombia.nexcesscdn.net/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/g/u/guatavita-lake-day-tour.jpg"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>GUATAVITA</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="guatavita">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img src="https://tucurincaquindio.com/wp-content/uploads/2022/07/turismo-eje-cafetero.webp"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>EJE CAFETERO</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="eje-cafetero">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+          <div class="elemento">
+            <div class="contenedor-imagen">
+              <img src="https://buscacity.com/wp-content/uploads/2024/02/Salt_Mine_Nemocon_Colombia_5743986824.jpg"
+                alt="Imagen 2">
+            </div>
+            <div class="titulo">
+              <h3>NEMOCÓN</h3>
+              <p><i class="fa-solid fa-phone"></i>322 7667943 - 322 3906478</p>
+              <button class="open-modal" data-modal="nemocon">
+                Saber mas
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="modal" data-modal-id="nemocon">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        Modal Nemocón
+        <img src="assets/img/nemocon.jpg" alt="">
+        <div class="modal-info">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal" data-modal-id="eje-cafetero">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/ejecafetero.jpg" alt="">
+        <div class="modal-info">
+          <h3>Eje Cafetero</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="villa-de-leyva">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/villadeleyva.jpg" alt="">
+        <div class="modal-info">
+          <h3>Villa de Leyva</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="zipaquira">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/zipaquira.jpg" alt="Zipaquirá">
+        <div class="modal-info">
+          <h3>Zipaquirá</h3>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal" data-modal-id="neiva">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/neiva.jpg" alt="">
+        <div class="modal-info">
+          <h3>Neiva</h3>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal" data-modal-id="pasto">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        Modal Pasto
+        <img src="assets/img/pasto.jpg" alt="">
+        <div class="modal-info">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="medellin">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        Modal Medellin
+        <img src="assets/img/medellin.jpg" alt="">
+        <div class="modal-info">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="rio-sucio">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/rio-sucio.jpg" alt="Rio Sucio">
+        <div class="modal-info">
+          <h3>Rio Sucio</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="cartago">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        Modal Cartago
+        <img src="assets/img/cartago.jpg" alt="">
+        <div class="modal-info">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="popayan">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/popayan.jpg" alt="Popayan">
+        <div class="modal-info">
+          <h3>Popayan</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="sevilla">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/sevilla.jpg" alt="Sevilla">
+        <div class="modal-info">
+          <h3>Sevilla</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="pereira">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/pereira.jpg" alt="Popayan">
+        <div class="modal-info">
+          <h3>Pereira</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="cartagena">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/cartagena.jpg" alt="Cartagena">
+        <div class="modal-info">
+          <h3>Cartagena</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" data-modal-id="valledupar">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        <img src="assets/img/valledupar.jpg" alt="Valledupar">
+        <div class="modal-info">
+          <h3>Valledupar</h3>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal" data-modal-id="bogota">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        Modal Bogota
+        <img src="assets/img/bogota.jpg" alt="">
+        <div class="modal-info">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal" data-modal-id="guatavita">
+      <div class="modal-content">
+        <button class="close-modal">X</button>
+        Modal guatavita
+        <img src="assets/img/guatavita.jpg" alt="">
+        <div class="modal-info">
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="container">
+        <p>© 2025 AtlasTours | Todos los derechos reservados.</p>
+        <div class="redes">
+          <a href="https://www.instagram.com/" target="_blank" title="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://www.facebook.com/" target="_blank" title="Facebook">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="https://wa.me/message/EHEM3HUWAFZDL1 " target="_blank" title="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a href="https://wa.me/message/EHEM3HUWAFZDL1 " class="whatsapp-float" target="_blank" title="whatsApp">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+    <link rel="icon" href="favicon.png" type="../IMAGENES/Imagenes/atlas_tours_logo_transparente.png">
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
