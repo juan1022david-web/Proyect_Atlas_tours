@@ -1243,6 +1243,22 @@ form .col {
 .footer-marca {
   flex: 1 1 280px;
 }
+.footer {
+  position: relative;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #0a0a0c;
+  background-image: 
+    linear-gradient(180deg, rgba(10, 10, 12, 0.88) 0%, rgba(5, 5, 6, 0.96) 100%),
+    url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #e5e5e5;
+  padding: 60px 40px 30px 40px;
+  border-top: 2px solid;
+  border-image: linear-gradient(90deg, transparent, #bf953f, #fcf6ba, #b38728, transparent) 1;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(191, 149, 63, 0.15);
+}
 
 .footer-marca h2 {
   font-family: 'Cinzel', serif;
