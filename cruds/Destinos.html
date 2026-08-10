@@ -1,230 +1,363 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Atlas Tours - Cotizaciones</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../assets/css/estilos.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" type="image/png" href="../assets/img/icon.png">
-  <style>
-    .crud-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    .crud-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .crud-tabla { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
-    .crud-tabla th, .crud-tabla td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-    .crud-tabla th { background: #1a1a1a; color: #fff; }
-    .crud-tabla tr:hover { background: #f7f7f7; }
-    .btn-crear { background: #1a1a1a; color: #fff; padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; }
-    .btn-icon { border: none; background: none; cursor: pointer; font-size: 16px; margin-right: 6px; }
-    .btn-icon.editar { color: #2563eb; }
-    .btn-icon.eliminar { color: #dc2626; }
 
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; align-items: center; justify-content: center; }
-    .modal-overlay.abierto { display: flex; }
-    .modal-content { background: #fff; border-radius: 16px; width: 90%; max-width: 500px; padding: 28px; max-height: 85vh; overflow-y: auto; }
-    .modal-content h2 { margin-top: 0; }
-    .modal-content label { display: block; margin: 12px 0 4px; font-size: 14px; font-weight: 600; }
-    .modal-content input, .modal-content select, .modal-content textarea {
-      width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;
-    }
-    .modal-acciones { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-    .modal-acciones button { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; }
-    .btn-guardar { background: #1a1a1a; color: #fff; }
-    .btn-cancelar { background: #eee; }
+    <meta charset="UTF-8">
 
-    .toast { display:none; position: fixed; bottom: 20px; right: 20px; padding: 14px 20px; border-radius: 8px; color: #fff; z-index: 200; }
-    .toast.exito { background: #16a34a; }
-    .toast.error { background: #dc2626; }
-  </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administrar Destinos - Atlas Tours</title>
+
+    <!-- CSS DEL CRUD -->
+    <link rel="stylesheet" href="../assets/css/crud_destinos.css">
+
+    <!-- FONT AWESOME -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
+
+
 <body>
 
-  <div class="crud-container">
-    <div class="crud-header">
-      <h1>Cotizaciones</h1>
-      <button class="btn-crear" id="btnNueva"><i class="fa-solid fa-plus"></i> Nueva cotización</button>
-    </div>
 
-    <table class="crud-tabla">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Usuario</th>
-          <th>Servicio</th>
-          <th>Fecha</th>
-          <th>Origen</th>
-          <th>Destino</th>
-          <th>Personas</th>
-          <th>Detalles</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tablaBody">
-        <!-- filas generadas por JS -->
-      </tbody>
-    </table>
-  </div>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-  <!-- Modal crear/editar -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal-content">
-      <h2 id="modalTitulo">Nueva cotización</h2>
-      <form id="formCotizacion">
-        <input type="hidden" id="id_cotizacion">
+    <header class="crud-header">
 
-        <label for="id_usuario">ID Usuario (opcional)</label>
-        <input type="number" id="id_usuario" placeholder="Vacío si es invitado">
+        <div class="crud-container">
 
-        <label for="id_tipo_servicio">ID Tipo de servicio</label>
-        <input type="number" id="id_tipo_servicio" required>
+            <div class="logo">
 
-        <label for="fecha_hora">Fecha y hora</label>
-        <input type="datetime-local" id="fecha_hora" required>
+                <h1>
+                    Atlas Tours
+                </h1>
 
-        <label for="origen">Origen</label>
-        <input type="text" id="origen" required>
+                <span>
+                    Administración de destinos
+                </span>
 
-        <label for="destino">Destino</label>
-        <input type="text" id="destino" required>
+            </div>
 
-        <label for="n_personas">Número de personas</label>
-        <input type="number" id="n_personas" min="1" required>
 
-        <label for="detalles_opcionales">Detalles opcionales</label>
-        <textarea id="detalles_opcionales" rows="3"></textarea>
+            <nav>
 
-        <div class="modal-acciones">
-          <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
-          <button type="submit" class="btn-guardar">Guardar</button>
+                <a href="../empresa.html">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    Inicio
+
+                </a>
+
+
+                <a href="destinos.html">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    Ver destinos
+
+                </a>
+
+            </nav>
+
         </div>
-      </form>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         CONTENIDO
+    ====================================================== -->
+
+    <main class="crud-container">
+
+        <section class="crud-panel">
+
+
+            <!-- TÍTULO -->
+
+            <div class="crud-titulo">
+
+                <div>
+
+                    <h2>
+                        Gestión de destinos
+                    </h2>
+
+                    <p>
+                        Administra los destinos turísticos
+                        disponibles en Atlas Tours.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-nuevo"
+                    id="btnNuevoDestino">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Nuevo destino
+
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TABLA
+            ================================================== -->
+
+            <div class="tabla-contenedor">
+
+                <table class="crud-tabla">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Imagen</th>
+
+                            <th>Destino</th>
+
+                            <th>Teléfono</th>
+
+                            <th>Estado</th>
+
+                            <th>Fecha creación</th>
+
+                            <th>Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="tablaBody">
+
+                        <!--
+                            Aquí JavaScript
+                            cargará los destinos
+                        -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         MODAL NUEVO / EDITAR DESTINO
+    ====================================================== -->
+
+    <div
+        class="modal-overlay"
+        id="modalDestino">
+
+
+        <div class="modal-content">
+
+
+            <h2 id="tituloModal">
+
+                Nuevo destino
+
+            </h2>
+
+
+
+            <form id="formDestino">
+
+
+                <!-- ID -->
+
+                <input
+                    type="hidden"
+                    id="id_destino">
+
+
+
+                <!-- NOMBRE -->
+
+                <label for="nombre">
+
+                    Nombre del destino
+
+                </label>
+
+                <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Ej: Cartagena"
+                    maxlength="100"
+                    required>
+
+
+
+                <!-- DESCRIPCIÓN -->
+
+                <label for="descripcion">
+
+                    Descripción
+
+                </label>
+
+                <textarea
+                    id="descripcion"
+                    name="descripcion"
+                    rows="5"
+                    placeholder="Descripción del destino..."
+                    required></textarea>
+
+
+
+                <!-- IMAGEN -->
+
+                <label for="imagen">
+
+                    Imagen
+
+                </label>
+
+                <input
+                    type="file"
+                    id="imagen"
+                    name="imagen"
+                    accept="image/*">
+
+                <!-- ID oculto: guarda la imagen actual en base64
+                     (necesario al editar sin volver a seleccionar archivo) -->
+                <input
+                    type="hidden"
+                    id="imagenActual">
+
+                <img
+                    id="previewImagen"
+                    alt="Vista previa"
+                    style="
+                        display: none;
+                        margin-top: 10px;
+                        width: 140px;
+                        height: 100px;
+                        object-fit: cover;
+                        border-radius: 8px;
+                        border: 1px solid #d1d5db;">
+
+
+
+                <!-- TELÉFONO -->
+
+                <label for="telefono">
+
+                    Teléfono
+
+                </label>
+
+                <input
+                    type="text"
+                    id="telefono"
+                    name="telefono"
+                    placeholder="322 7667943 - 322 3906478">
+
+
+
+                <!-- ESTADO -->
+
+                <label for="estado">
+
+                    Estado
+
+                </label>
+
+                <select
+                    id="estado"
+                    name="estado"
+                    required>
+
+                    <option value="Activo">
+                        Activo
+                    </option>
+
+                    <option value="Inactivo">
+                        Inactivo
+                    </option>
+
+                </select>
+
+
+
+                <!-- BOTONES -->
+
+                <div class="modal-acciones">
+
+
+                    <button
+                        type="button"
+                        class="btn-cancelar"
+                        id="btnCancelar">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn-guardar">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+        </div>
+
     </div>
-  </div>
 
-  <div id="toast" class="toast"></div>
 
-  <script>
-    const API = '../crud_cotizaciones.php'; // ajusta la ruta según dónde quede el PHP
 
-    const tablaBody     = document.getElementById('tablaBody');
-    const modalOverlay  = document.getElementById('modalOverlay');
-    const modalTitulo   = document.getElementById('modalTitulo');
-    const form          = document.getElementById('formCotizacion');
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
 
-    function mostrarToast(msg, tipo) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.className = 'toast ' + tipo;
-      toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 3000);
-    }
+    <div
+        id="toast"
+        class="toast">
 
-    function abrirModal(editar = false) {
-      modalTitulo.textContent = editar ? 'Editar cotización' : 'Nueva cotización';
-      modalOverlay.classList.add('abierto');
-    }
-    function cerrarModal() {
-      modalOverlay.classList.remove('abierto');
-      form.reset();
-      document.getElementById('id_cotizacion').value = '';
-    }
+    </div>
 
-    document.getElementById('btnNueva').addEventListener('click', () => abrirModal(false));
-    document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
 
-    // --- LEER: cargar tabla ---
-    async function cargarCotizaciones() {
-      const res = await fetch(API);
-      const datos = await res.json();
-      tablaBody.innerHTML = '';
 
-      datos.forEach(c => {
-        const nombreUsuario = c.nombres ? `${c.nombres} ${c.apellidos}` : 'Invitado';
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-          <td>${c.id_cotizacion}</td>
-          <td>${nombreUsuario}</td>
-          <td>${c.nombre_servicio ?? '—'}</td>
-          <td>${new Date(c.fecha_hora).toLocaleString('es-CO')}</td>
-          <td>${c.origen}</td>
-          <td>${c.destino}</td>
-          <td>${c.n_personas}</td>
-          <td>${c.detalles_opcionales ?? '—'}</td>
-          <td>
-            <button class="btn-icon editar" onclick="editarCotizacion(${c.id_cotizacion})"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn-icon eliminar" onclick="eliminarCotizacion(${c.id_cotizacion})"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        `;
-        tablaBody.appendChild(fila);
-      });
-    }
+    <!-- JAVASCRIPT -->
 
-    // --- EDITAR: precargar formulario ---
-    async function editarCotizacion(id) {
-      const res = await fetch(`${API}?id=${id}`);
-      const c = await res.json();
+    <script src="../assets/js/crud_destinos.js"></script>
 
-      document.getElementById('id_cotizacion').value      = c.id_cotizacion;
-      document.getElementById('id_usuario').value         = c.id_usuario ?? '';
-      document.getElementById('id_tipo_servicio').value   = c.id_tipo_servicio;
-      document.getElementById('fecha_hora').value         = c.fecha_hora.replace(' ', 'T').slice(0,16);
-      document.getElementById('origen').value              = c.origen;
-      document.getElementById('destino').value             = c.destino;
-      document.getElementById('n_personas').value          = c.n_personas;
-      document.getElementById('detalles_opcionales').value = c.detalles_opcionales ?? '';
 
-      abrirModal(true);
-    }
-
-    // --- ELIMINAR ---
-    async function eliminarCotizacion(id) {
-      if (!confirm('¿Seguro que quieres eliminar esta cotización?')) return;
-
-      const res = await fetch(`${API}?id=${id}`, { method: 'DELETE' });
-      const data = await res.json();
-
-      if (data.exito) {
-        mostrarToast(data.mensaje, 'exito');
-        cargarCotizaciones();
-      } else {
-        mostrarToast(data.mensaje, 'error');
-      }
-    }
-
-    // --- CREAR / ACTUALIZAR ---
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const id = document.getElementById('id_cotizacion').value;
-      const payload = {
-        id_usuario:           document.getElementById('id_usuario').value || null,
-        id_tipo_servicio:     document.getElementById('id_tipo_servicio').value,
-        fecha_hora:           document.getElementById('fecha_hora').value,
-        origen:                document.getElementById('origen').value,
-        destino:               document.getElementById('destino').value,
-        n_personas:            document.getElementById('n_personas').value,
-        detalles_opcionales:   document.getElementById('detalles_opcionales').value
-      };
-
-      let res;
-      if (id) {
-        payload.id_cotizacion = id;
-        res = await fetch(API, { method: 'PUT', body: JSON.stringify(payload) });
-      } else {
-        res = await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-      }
-
-      const data = await res.json();
-      if (data.exito) {
-        mostrarToast(data.mensaje, 'exito');
-        cerrarModal();
-        cargarCotizaciones();
-      } else {
-        mostrarToast(data.mensaje, 'error');
-      }
-    });
-
-    cargarCotizaciones();
-  </script>
 </body>
+
 </html>

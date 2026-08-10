@@ -83,8 +83,8 @@ CREATE TABLE IF NOT EXISTS mensaje (
     creado_en      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-TABLA DE ADMINISTRADORES
-CREATE TABLE IF NOT EXISTS admin (
+--TABLA DE ADMINISTRADORES
+CREATE TABLE  admin (
     id_admin   INT AUTO_INCREMENT PRIMARY KEY,
     correo     VARCHAR(255) UNIQUE NOT NULL,
     contrasena VARCHAR(255) NOT NULL
@@ -93,3 +93,15 @@ CREATE TABLE IF NOT EXISTS admin (
 INSERT INTO admin (correo, contrasena)
 VALUES ('juan1022david@gmail.com', '$2y$10$jfgrJBsp/C6tqPom6.uwh.L9n0a7PSjJQ.7hPfZ3KVfGhbNPAfxBu')
 ON DUPLICATE KEY UPDATE contrasena = VALUES(contrasena);
+
+CREATE TABLE destinos (
+    id_destino      INT AUTO_INCREMENT PRIMARY KEY,
+    nombre          VARCHAR(100)        NOT NULL,
+    descripcion     TEXT                NOT NULL,
+    imagen          VARCHAR(255)        NOT NULL,   -- ruta o nombre de archivo, NO base64
+    telefono        VARCHAR(50)         NULL,
+    estado          ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
+    fecha_creacion  DATE                NOT NULL DEFAULT (CURRENT_DATE),
+    fecha_actualizacion TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                         ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
