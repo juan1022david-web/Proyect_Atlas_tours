@@ -1000,7 +1000,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-
   opacity: 0;
   pointer-events: none;
   transition: .3s ease;
@@ -1015,13 +1014,14 @@ button {
 
 .modal-content {
   border-radius: 24px;
-  width: 100%;
+  width: 90%;
   max-width: 1200px;
+  max-height: 85vh;
   overflow: hidden;
+  overflow-y: auto;
   position: relative;
+  background: #ffffff;
 
-  transform: translateY(20px);
-  transition: .3s ease;
 }
 
 .modal.open .modal-content {
