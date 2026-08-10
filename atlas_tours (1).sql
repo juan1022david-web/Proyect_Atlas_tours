@@ -82,3 +82,14 @@ CREATE TABLE IF NOT EXISTS mensaje (
     mensaje        TEXT,
     creado_en      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+TABLA DE ADMINISTRADORES
+CREATE TABLE IF NOT EXISTS admin (
+    id_admin   INT AUTO_INCREMENT PRIMARY KEY,
+    correo     VARCHAR(255) UNIQUE NOT NULL,
+    contrasena VARCHAR(255) NOT NULL
+);
+
+INSERT INTO admin (correo, contrasena)
+VALUES ('juan1022david@gmail.com', '$2y$10$jfgrJBsp/C6tqPom6.uwh.L9n0a7PSjJQ.7hPfZ3KVfGhbNPAfxBu')
+ON DUPLICATE KEY UPDATE contrasena = VALUES(contrasena);

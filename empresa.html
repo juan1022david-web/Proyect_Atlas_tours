@@ -69,15 +69,16 @@
       btn.disabled = true;
       btn.textContent = 'Ingresando...';
  
-      fetch('Base_De_Datos.php', { method: 'POST', body: new FormData(this) })
-        .then(res => res.text())
-        .then(respuesta => {
-          if (respuesta.includes('✅') || respuesta.trim() === '') {
-            // Login exitoso: el PHP hace redirect, pero si no funciona mostramos mensaje
-            mostrarToast('✅ ¡Bienvenido! Redirigiendo...', 'exito');
-            setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+      fetch('php/Base_De_Datos.php', { method: 'POST', body: new FormData(this) })
+        .then(res => res.json())
+        .then(data => {
+          if (data.exito) {
+            mostrarToast('✅ ' + data.mensaje + ' Redirigiendo...', 'exito');
+            setTimeout(() => {
+              window.location.href = data.redirect;
+            }, 1200);
           } else {
-            mostrarToast(respuesta.replace(/<[^>]*>/g, ''), 'error');
+            mostrarToast('❌ ' + data.mensaje, 'error');
             btn.disabled = false;
             btn.textContent = 'Ingresar';
           }

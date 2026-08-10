@@ -1,87 +1,3 @@
-<?php
-session_start();
-include("conexion.php");
-
-// Verificar si el formulario fue enviado
-if (isset($_POST['formulario'])) {
-
-    // Verificar que el usuario haya iniciado sesión
-    if (!isset($_SESSION['id_usuario'])) {
-        echo "❌ Debes iniciar sesión para realizar una cotización.";
-        exit();
-    }
-
-    // Obtener el ID del usuario
-    $id_usuario = $_SESSION['id_usuario'];
-
-    // Recibir los datos del formulario
-    $id_tipo_servicio = $_POST['servicio'];
-
-    // Convertir la fecha al formato DATETIME de MySQL
-    $fecha_hora = $_POST['fecha'];
-    $fecha_hora = str_replace("T", " ", $fecha_hora);
-    $fecha_hora .= ":00";
-
-    $origen = $_POST['origen'];
-    $destino = $_POST['destino'];
-    $personas = $_POST['personas'];
-    $detalle = $_POST['detalles'];
-
-    // ==========================
-    // VALIDAR SI YA EXISTE ESA FECHA Y HORA
-    // ==========================
-
-    $consulta = mysqli_query($conexion,
-        "SELECT id_cotizacion
-         FROM cotizar
-         WHERE fecha_hora = '$fecha_hora'"
-    );
-
-    if (!$consulta) {
-        echo "❌ Error al consultar la base de datos: " . mysqli_error($conexion);
-        exit();
-    }
-
-    if (mysqli_num_rows($consulta) > 0) {
-        echo "❌ Ese horario ya está reservado. Por favor selecciona otro.";
-        exit();
-    }
-
-    // ==========================
-    // GUARDAR LA COTIZACIÓN
-    // ==========================
-
-    $guardar = mysqli_query($conexion,
-        "INSERT INTO cotizar
-        (
-            id_usuario,
-            id_tipo_servicio,
-            fecha_hora,
-            origen,
-            destino,
-            n_personas,
-            detalles_opcionales
-        )
-        VALUES
-        (
-            '$id_usuario',
-            '$id_tipo_servicio',
-            '$fecha_hora',
-            '$origen',
-            '$destino',
-            '$personas',
-            '$detalle'
-        )"
-    );
-
-    if ($guardar) {
-        echo "✅ Cotización registrada correctamente.";
-    } else {
-        echo "❌ Error al guardar la cotización: " . mysqli_error($conexion);
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -172,7 +88,7 @@ if (isset($_POST['formulario'])) {
                 </div>
 
                 <div class="verificacion">
-                    <input type="checkbox" id="politica" required>
+                    <input type="checkbox" id="politica" name="politica" required>
                     <label for="politica">
                         Acepto y he leído la <a href="#" target="_blank">Política de Tratamiento de Datos Personales</a>
                     </label>
@@ -219,14 +135,18 @@ if (isset($_POST['formulario'])) {
             btn.disabled = true;
             btn.textContent = 'Enviando...';
 
-            fetch('Base_De_Datos.php', { method: 'POST', body: new FormData(this) })
-                .then(res => res.text())
-                .then(respuesta => {
-                    if (respuesta.includes('✅')) {
-                        mostrarToast('✅ ¡Cotización enviada! Pronto te contactaremos.', 'exito');
+            // Nota: Base_De_Datos.php vive en la carpeta /php/, mientras que
+            // este archivo (cotizar.php) debe estar en la RAÍZ del proyecto,
+            // junto a index.html y empresa.html, para que estas rutas relativas
+            // (assets/css/..., index.html, php/Base_De_Datos.php) funcionen.
+            fetch('php/Base_De_Datos.php', { method: 'POST', body: new FormData(this) })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exito) {
+                        mostrarToast('✅ ' + data.mensaje, 'exito');
                         document.getElementById('formCotizar').reset();
                     } else {
-                        mostrarToast(respuesta, 'error');
+                        mostrarToast('❌ ' + data.mensaje, 'error');
                     }
                     btn.disabled = false;
                     btn.textContent = 'Cotizar';
