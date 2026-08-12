@@ -2,26 +2,25 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Administrar Destinos - Atlas Tours</title>
 
-    <!-- CSS DEL CRUD -->
+    <!-- =====================================================
+         CSS DEL CRUD
+    ====================================================== -->
     <link rel="stylesheet" href="../assets/css/crud_destinos.css">
 
-    <!-- FONT AWESOME -->
+    <!-- =====================================================
+         FONT AWESOME
+    ====================================================== -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
 
-
 <body>
-
 
     <!-- =====================================================
          HEADER
@@ -33,9 +32,7 @@
 
             <div class="logo">
 
-                <h1>
-                    Atlas Tours
-                </h1>
+                <h1>Atlas Tours</h1>
 
                 <span>
                     Administración de destinos
@@ -43,24 +40,17 @@
 
             </div>
 
-
             <nav>
 
+                <!-- Si empresa.html está en la carpeta principal -->
                 <a href="../empresa.html">
-
                     <i class="fa-solid fa-house"></i>
-
                     Inicio
-
                 </a>
 
-
                 <a href="destinos.html">
-
                     <i class="fa-solid fa-location-dot"></i>
-
                     Ver destinos
-
                 </a>
 
             </nav>
@@ -70,17 +60,17 @@
     </header>
 
 
-
     <!-- =====================================================
-         CONTENIDO
+         CONTENIDO PRINCIPAL
     ====================================================== -->
 
     <main class="crud-container">
 
         <section class="crud-panel">
 
-
-            <!-- TÍTULO -->
+            <!-- =================================================
+                 TÍTULO Y BOTÓN NUEVO
+            ================================================== -->
 
             <div class="crud-titulo">
 
@@ -97,7 +87,6 @@
 
                 </div>
 
-
                 <button
                     type="button"
                     class="btn-nuevo"
@@ -112,9 +101,8 @@
             </div>
 
 
-
             <!-- =================================================
-                 TABLA
+                 TABLA DE DESTINOS
             ================================================== -->
 
             <div class="tabla-contenedor">
@@ -143,12 +131,11 @@
 
                     </thead>
 
-
                     <tbody id="tablaBody">
 
                         <!--
-                            Aquí JavaScript
-                            cargará los destinos
+                            El archivo crud_destinos.js
+                            cargará aquí los destinos.
                         -->
 
                     </tbody>
@@ -162,7 +149,6 @@
     </main>
 
 
-
     <!-- =====================================================
          MODAL NUEVO / EDITAR DESTINO
     ====================================================== -->
@@ -171,153 +157,224 @@
         class="modal-overlay"
         id="modalDestino">
 
-
         <div class="modal-content">
 
 
-            <h2 id="tituloModal">
+            <!-- =================================================
+                 CABECERA DEL MODAL
+            ================================================== -->
 
-                Nuevo destino
+            <div class="modal-header">
 
-            </h2>
+                <div>
+
+                    <span class="modal-etiqueta">
+                        ATLAS TOURS
+                    </span>
+
+                    <h2 id="tituloModal">
+                        Nuevo destino
+                    </h2>
+
+                </div>
 
 
+                <button
+                    type="button"
+                    class="btn-cerrar-modal"
+                    id="btnCerrarModal"
+                    aria-label="Cerrar">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORMULARIO
+            ================================================== -->
 
             <form id="formDestino">
 
 
-                <!-- ID -->
+                <!-- =================================================
+                     ID DEL DESTINO
+                ================================================== -->
 
                 <input
                     type="hidden"
                     id="id_destino">
 
 
+                <!-- =================================================
+                     NOMBRE DEL DESTINO
+                ================================================== -->
 
-                <!-- NOMBRE -->
+                <div class="campo">
 
-                <label for="nombre">
+                    <label for="nombre">
 
-                    Nombre del destino
+                        <i class="fa-solid fa-location-dot"></i>
 
-                </label>
+                        Nombre del destino
 
-                <input
-                    type="text"
-                    id="nombre"
-                    name="nombre"
-                    placeholder="Ej: Cartagena"
-                    maxlength="100"
-                    required>
+                    </label>
 
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Ej: Cartagena"
+                        maxlength="100"
+                        required>
 
-
-                <!-- DESCRIPCIÓN -->
-
-                <label for="descripcion">
-
-                    Descripción
-
-                </label>
-
-                <textarea
-                    id="descripcion"
-                    name="descripcion"
-                    rows="5"
-                    placeholder="Descripción del destino..."
-                    required></textarea>
+                </div>
 
 
+                <!-- =================================================
+                     DESCRIPCIÓN
+                ================================================== -->
 
-                <!-- IMAGEN -->
+                <div class="campo">
 
-                <label for="imagen">
+                    <label for="descripcion">
 
-                    Imagen
+                        <i class="fa-solid fa-align-left"></i>
 
-                </label>
+                        Descripción
 
-                <input
-                    type="file"
-                    id="imagen"
-                    name="imagen"
-                    accept="image/*">
+                    </label>
 
-                <!-- ID oculto: guarda la imagen actual en base64
-                     (necesario al editar sin volver a seleccionar archivo) -->
-                <input
-                    type="hidden"
-                    id="imagenActual">
+                    <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        rows="5"
+                        placeholder="Descripción del destino..."
+                        required></textarea>
 
-                <img
-                    id="previewImagen"
-                    alt="Vista previa"
-                    style="
-                        display: none;
-                        margin-top: 10px;
-                        width: 140px;
-                        height: 100px;
-                        object-fit: cover;
-                        border-radius: 8px;
-                        border: 1px solid #d1d5db;">
+                </div>
 
 
+                <!-- =================================================
+                     IMAGEN
+                ================================================== -->
 
-                <!-- TELÉFONO -->
+                <div class="campo">
 
-                <label for="telefono">
+                    <label for="imagen">
 
-                    Teléfono
+                        <i class="fa-solid fa-image"></i>
 
-                </label>
+                        Imagen del destino
 
-                <input
-                    type="text"
-                    id="telefono"
-                    name="telefono"
-                    placeholder="322 7667943 - 322 3906478">
+                    </label>
 
-
-
-                <!-- ESTADO -->
-
-                <label for="estado">
-
-                    Estado
-
-                </label>
-
-                <select
-                    id="estado"
-                    name="estado"
-                    required>
-
-                    <option value="Activo">
-                        Activo
-                    </option>
-
-                    <option value="Inactivo">
-                        Inactivo
-                    </option>
-
-                </select>
+                    <input
+                        type="file"
+                        id="imagen"
+                        name="imagen"
+                        accept="image/*">
 
 
+                    <!--
+                        Guarda la imagen actual cuando
+                        estamos editando un destino.
+                    -->
 
-                <!-- BOTONES -->
+                    <input
+                        type="hidden"
+                        id="imagenActual">
+
+
+                    <!-- Vista previa -->
+
+                    <img
+                        id="previewImagen"
+                        src=""
+                        alt="Vista previa de la imagen">
+
+                </div>
+
+
+                <!-- =================================================
+                     TELÉFONO
+                ================================================== -->
+
+                <div class="campo">
+
+                    <label for="telefono">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        Teléfono
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="telefono"
+                        name="telefono"
+                        placeholder="322 7667943 - 322 3906478">
+
+                </div>
+
+
+                <!-- =================================================
+                     ESTADO
+                ================================================== -->
+
+                <div class="campo">
+
+                    <label for="estado">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Estado
+
+                    </label>
+
+                    <select
+                        id="estado"
+                        name="estado"
+                        required>
+
+                        <option value="Activo">
+                            Activo
+                        </option>
+
+                        <option value="Inactivo">
+                            Inactivo
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =================================================
+                     BOTONES
+                ================================================== -->
 
                 <div class="modal-acciones">
 
+
+                    <!-- CANCELAR -->
 
                     <button
                         type="button"
                         class="btn-cancelar"
                         id="btnCancelar">
 
+                        <i class="fa-solid fa-xmark"></i>
+
                         Cancelar
 
                     </button>
 
+
+                    <!-- GUARDAR -->
 
                     <button
                         type="submit"
@@ -325,13 +382,11 @@
 
                         <i class="fa-solid fa-floppy-disk"></i>
 
-                        Guardar
+                        Guardar destino
 
                     </button>
 
-
                 </div>
-
 
             </form>
 
@@ -340,23 +395,25 @@
     </div>
 
 
-
     <!-- =====================================================
-         TOAST
+         MENSAJES TOAST
     ====================================================== -->
 
     <div
         id="toast"
         class="toast">
-
     </div>
 
 
-
-    <!-- JAVASCRIPT -->
+    <!-- =====================================================
+         JAVASCRIPT DEL CRUD
+         
+         IMPORTANTE:
+         destinos.html está dentro de /cruds/
+         por eso usamos ../ para volver a la raíz.
+    ====================================================== -->
 
     <script src="../assets/js/crud_destinos.js"></script>
-
 
 </body>
 
