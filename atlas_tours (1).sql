@@ -105,3 +105,16 @@ CREATE TABLE destinos (
     fecha_actualizacion TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
                                          ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+
+
+--TABLA DE VEHICULOS CRUD
+CREATE TABLE vehiculos (
+    id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
+    placa VARCHAR(20) NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    capacidad INT NOT NULL,
+    descripcion TEXT,
+    imagen VARCHAR(255) NOT NULL,
+    estado VARCHAR(20) DEFAULT 'Activo'
+); // sql
