@@ -1,145 +1,340 @@
 /* =========================================================
-   CRUD DE VEHICULOS - Atlas Tours
+   CRUD DE VEHÍCULOS - ATLAS TOURS
 ========================================================= */
 
 const API_URL = '../php/crud_vehiculos.php';
+
 
 // =====================================================
 // REFERENCIAS DEL DOM
 // =====================================================
 
-const tablaBody       = document.getElementById('tablaBody');
-const modalVehiculo   = document.getElementById('modalVehiculo');
-const tituloModal     = document.getElementById('tituloModal');
-const formVehiculo    = document.getElementById('formVehiculo');
+const tablaBody = document.getElementById('tablaBody');
 
-const btnNuevoVehiculo = document.getElementById('btnNuevoVehiculo');
-const btnCerrarModal   = document.getElementById('btnCerrarModal');
-const btnCancelar      = document.getElementById('btnCancelar');
+const modalVehiculo = document.getElementById('modalVehiculo');
 
-const inputId          = document.getElementById('id_vehiculo');
-const inputPlaca       = document.getElementById('placa');
-const inputMarca       = document.getElementById('marca');
-const inputModelo      = document.getElementById('modelo');
-const inputCapacidad   = document.getElementById('capacidad');
-const inputDescripcion = document.getElementById('descripcion');
-const inputImagen      = document.getElementById('imagen');
-const inputImagenActual = document.getElementById('imagenActual');
-const previewImagen    = document.getElementById('previewImagen');
-const inputEstado      = document.getElementById('estado');
+const tituloModal = document.getElementById('tituloModal');
 
-const toast = document.getElementById('toast');
+const formVehiculo = document.getElementById('formVehiculo');
+
+const btnNuevoVehiculo =
+    document.getElementById('btnNuevoVehiculo');
+
+const btnCerrarModal =
+    document.getElementById('btnCerrarModal');
+
+const btnCancelar =
+    document.getElementById('btnCancelar');
+
+
+const inputId =
+    document.getElementById('id_vehiculo');
+
+const inputPlaca =
+    document.getElementById('placa');
+
+const inputMarca =
+    document.getElementById('marca');
+
+const inputModelo =
+    document.getElementById('modelo');
+
+const inputCapacidad =
+    document.getElementById('capacidad');
+
+const inputDescripcion =
+    document.getElementById('descripcion');
+
+const inputImagen =
+    document.getElementById('imagen');
+
+const inputImagenActual =
+    document.getElementById('imagenActual');
+
+const previewImagen =
+    document.getElementById('previewImagen');
+
+const inputEstado =
+    document.getElementById('estado');
+
+const toast =
+    document.getElementById('toast');
 
 
 // =====================================================
-// TOAST DE MENSAJES
+// TOAST
 // =====================================================
 
 function mostrarToast(mensaje, tipo = 'exito') {
+
+    if (!toast) return;
+
     toast.textContent = mensaje;
+
     toast.className = `toast ${tipo} mostrar`;
+
     toast.style.display = 'block';
 
     setTimeout(() => {
+
         toast.classList.remove('mostrar');
+
         toast.style.display = 'none';
+
     }, 3000);
 }
 
 
 // =====================================================
-// CARGAR VEHICULOS EN LA TABLA
+// CARGAR VEHÍCULOS
 // =====================================================
 
 async function cargarVehiculos() {
+
     try {
+
         const respuesta = await fetch(API_URL);
-        const vehiculos = await respuesta.json();
+
+        const texto = await respuesta.text();
+
+        let vehiculos;
+
+        try {
+
+            vehiculos = JSON.parse(texto);
+
+        } catch (error) {
+
+            console.error('Respuesta del servidor:', texto);
+
+            throw new Error(
+                'El servidor no devolvió JSON válido.'
+            );
+        }
+
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                vehiculos.error || 'Error al cargar vehículos'
+            );
+
+        }
+
 
         tablaBody.innerHTML = '';
 
+
+        if (!Array.isArray(vehiculos) || vehiculos.length === 0) {
+
+            tablaBody.innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align:center;">
+                        No hay vehículos registrados.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
         vehiculos.forEach(v => {
+
             const fila = document.createElement('tr');
 
+
             fila.innerHTML = `
+
                 <td>${v.id_vehiculo}</td>
-                <td>${v.placa}</td>
-                <td>${v.marca}</td>
-                <td>${v.modelo}</td>
-                <td>${v.capacidad}</td>
-                <td>${v.descripcion}</td>
-                <td><img src="${v.imagen}" alt="${v.marca}" class="tabla-imagen"></td>
+
+                <td>${v.placa ?? ''}</td>
+
+                <td>${v.marca ?? ''}</td>
+
+                <td>${v.modelo ?? ''}</td>
+
+                <td>${v.capacidad ?? ''}</td>
+
+                <td>${v.descripcion ?? ''}</td>
+
                 <td>
-                    <span class="estado-badge estado-${v.estado.toLowerCase()}">
-                        ${v.estado}
-                    </span>
+
+                    ${
+                        v.imagen
+                        ?
+                        `<img
+                            src="${v.imagen}"
+                            alt="${v.marca ?? 'Vehículo'}"
+                            class="tabla-imagen"
+                            onerror="this.style.display='none';">`
+                        :
+                        'Sin imagen'
+                    }
+
                 </td>
+
                 <td>
-                    <button type="button" class="btn-editar" data-id="${v.id_vehiculo}">
+
+                    <span class="
+                        estado-badge
+                        estado-${String(v.estado).toLowerCase()}
+                    ">
+
+                        ${v.estado ?? ''}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn-editar"
+                        title="Editar">
+
                         <i class="fa-solid fa-pen"></i>
+
                     </button>
-                    <button type="button" class="btn-eliminar" data-id="${v.id_vehiculo}">
+
+
+                    <button
+                        type="button"
+                        class="btn-eliminar"
+                        title="Eliminar">
+
                         <i class="fa-solid fa-trash"></i>
+
                     </button>
+
                 </td>
             `;
 
-            fila.querySelector('.btn-editar')
-                .addEventListener('click', () => abrirModalEditar(v));
 
-            fila.querySelector('.btn-eliminar')
-                .addEventListener('click', () => eliminarVehiculo(v.id_vehiculo));
+            fila
+                .querySelector('.btn-editar')
+                .addEventListener(
+                    'click',
+                    () => abrirModalEditar(v)
+                );
+
+
+            fila
+                .querySelector('.btn-eliminar')
+                .addEventListener(
+                    'click',
+                    () => eliminarVehiculo(v.id_vehiculo)
+                );
+
 
             tablaBody.appendChild(fila);
+
         });
 
+
     } catch (error) {
-        mostrarToast('Error al cargar los vehiculos', 'error');
+
         console.error(error);
+
+        mostrarToast(
+            error.message || 'Error al cargar los vehículos',
+            'error'
+        );
+
     }
+
 }
 
 
 // =====================================================
-// ABRIR MODAL - NUEVO VEHICULO
+// ABRIR MODAL NUEVO
 // =====================================================
 
 function abrirModalNuevo() {
+
     formVehiculo.reset();
 
     inputId.value = '';
+
     inputImagenActual.value = '';
+
     previewImagen.src = '';
+
     previewImagen.style.display = 'none';
 
-    tituloModal.textContent = 'Nuevo vehiculo';
+
+    inputEstado.value = 'Activo';
+
+
+    tituloModal.textContent =
+        'Nuevo Vehículo';
+
 
     modalVehiculo.classList.add('abierto');
+
 }
 
 
 // =====================================================
-// ABRIR MODAL - EDITAR VEHICULO
+// ABRIR MODAL EDITAR
 // =====================================================
 
 function abrirModalEditar(vehiculo) {
-    inputId.value          = vehiculo.id_vehiculo;
-    inputPlaca.value       = vehiculo.placa;
-    inputMarca.value       = vehiculo.marca;
-    inputModelo.value      = vehiculo.modelo;
-    inputCapacidad.value   = vehiculo.capacidad;
-    inputDescripcion.value = vehiculo.descripcion;
-    inputEstado.value      = vehiculo.estado;
 
-    inputImagenActual.value = vehiculo.imagen;
-    inputImagen.value       = '';
+    inputId.value =
+        vehiculo.id_vehiculo;
 
-    previewImagen.src = vehiculo.imagen;
-    previewImagen.style.display = 'block';
+    inputPlaca.value =
+        vehiculo.placa ?? '';
 
-    tituloModal.textContent = 'Editar vehiculo';
+    inputMarca.value =
+        vehiculo.marca ?? '';
+
+    inputModelo.value =
+        vehiculo.modelo ?? '';
+
+    inputCapacidad.value =
+        vehiculo.capacidad ?? '';
+
+    inputDescripcion.value =
+        vehiculo.descripcion ?? '';
+
+    inputEstado.value =
+        vehiculo.estado ?? 'Activo';
+
+
+    inputImagenActual.value =
+        vehiculo.imagen ?? '';
+
+
+    inputImagen.value = '';
+
+
+    if (vehiculo.imagen) {
+
+        previewImagen.src =
+            vehiculo.imagen;
+
+        previewImagen.style.display =
+            'block';
+
+    } else {
+
+        previewImagen.src = '';
+
+        previewImagen.style.display =
+            'none';
+
+    }
+
+
+    tituloModal.textContent =
+        'Editar Vehículo';
+
 
     modalVehiculo.classList.add('abierto');
+
 }
 
 
@@ -148,134 +343,332 @@ function abrirModalEditar(vehiculo) {
 // =====================================================
 
 function cerrarModal() {
+
     modalVehiculo.classList.remove('abierto');
+
 }
 
 
 // =====================================================
-// VISTA PREVIA DE LA IMAGEN SELECCIONADA
+// VISTA PREVIA DE IMAGEN
 // =====================================================
 
-inputImagen.addEventListener('change', () => {
-    const archivo = inputImagen.files[0];
+inputImagen.addEventListener(
+    'change',
+    () => {
 
-    if (!archivo) return;
-
-    const lector = new FileReader();
-
-    lector.onload = (e) => {
-        previewImagen.src = e.target.result;
-        previewImagen.style.display = 'block';
-    };
-
-    lector.readAsDataURL(archivo);
-});
+        const archivo =
+            inputImagen.files[0];
 
 
-// =====================================================
-// GUARDAR (CREAR / EDITAR) VEHICULO
-// =====================================================
+        if (!archivo) return;
 
-formVehiculo.addEventListener('submit', async (e) => {
-    e.preventDefault();
 
-    const datos = new FormData();
-    const id = inputId.value;
+        const lector =
+            new FileReader();
 
-    datos.append('accion', id ? 'editar' : 'crear');
 
-    if (id) {
-        datos.append('id', id);
+        lector.onload =
+            (e) => {
+
+                previewImagen.src =
+                    e.target.result;
+
+                previewImagen.style.display =
+                    'block';
+
+            };
+
+
+        lector.readAsDataURL(archivo);
+
     }
+);
 
-    datos.append('placa', inputPlaca.value.trim());
-    datos.append('marca', inputMarca.value.trim());
-    datos.append('modelo', inputModelo.value.trim());
-    datos.append('capacidad', inputCapacidad.value);
-    datos.append('descripcion', inputDescripcion.value.trim());
-    datos.append('estado', inputEstado.value);
 
-    if (inputImagen.files[0]) {
-        datos.append('imagen', inputImagen.files[0]);
-    }
+// =====================================================
+// GUARDAR VEHÍCULO
+// =====================================================
 
-    try {
-        const respuesta = await fetch(API_URL, {
-            method: 'POST',
-            body: datos
-        });
+formVehiculo.addEventListener(
+    'submit',
+    async (e) => {
 
-        const resultado = await respuesta.json();
+        e.preventDefault();
 
-        if (!respuesta.ok) {
-            mostrarToast(resultado.error || 'Ocurrió un error', 'error');
-            return;
+
+        const id =
+            inputId.value.trim();
+
+
+        const datos =
+            new FormData();
+
+
+        datos.append(
+            'accion',
+            id ? 'editar' : 'crear'
+        );
+
+
+        if (id) {
+
+            datos.append(
+                'id',
+                id
+            );
+
         }
 
-        mostrarToast(resultado.mensaje, 'exito');
-        cerrarModal();
-        cargarVehiculos();
 
-    } catch (error) {
-        mostrarToast('Error al guardar el vehiculo', 'error');
-        console.error(error);
+        datos.append(
+            'placa',
+            inputPlaca.value.trim()
+        );
+
+
+        datos.append(
+            'marca',
+            inputMarca.value.trim()
+        );
+
+
+        datos.append(
+            'modelo',
+            inputModelo.value.trim()
+        );
+
+
+        datos.append(
+            'capacidad',
+            inputCapacidad.value
+        );
+
+
+        datos.append(
+            'descripcion',
+            inputDescripcion.value.trim()
+        );
+
+
+        datos.append(
+            'estado',
+            inputEstado.value
+        );
+
+
+        if (inputImagen.files.length > 0) {
+
+            datos.append(
+                'imagen',
+                inputImagen.files[0]
+            );
+
+        }
+
+
+        try {
+
+            const respuesta =
+                await fetch(
+                    API_URL,
+                    {
+                        method: 'POST',
+                        body: datos
+                    }
+                );
+
+
+            const texto =
+                await respuesta.text();
+
+
+            let resultado;
+
+
+            try {
+
+                resultado =
+                    JSON.parse(texto);
+
+            } catch (error) {
+
+                console.error(
+                    'Respuesta PHP:',
+                    texto
+                );
+
+                throw new Error(
+                    'PHP no devolvió una respuesta JSON válida.'
+                );
+
+            }
+
+
+            if (!respuesta.ok) {
+
+                mostrarToast(
+                    resultado.error ||
+                    'Ocurrió un error',
+                    'error'
+                );
+
+                return;
+
+            }
+
+
+            mostrarToast(
+                resultado.mensaje ||
+                'Operación realizada correctamente',
+                'exito'
+            );
+
+
+            cerrarModal();
+
+
+            await cargarVehiculos();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            mostrarToast(
+                error.message ||
+                'Error al guardar el vehículo',
+                'error'
+            );
+
+        }
+
     }
-});
+);
 
 
 // =====================================================
-// ELIMINAR VEHICULO
+// ELIMINAR VEHÍCULO
 // =====================================================
 
 async function eliminarVehiculo(id) {
-    const confirmar = confirm('¿Seguro que deseas eliminar este vehiculo?');
+
+    const confirmar =
+        confirm(
+            '¿Seguro que deseas eliminar este vehículo?'
+        );
+
 
     if (!confirmar) return;
 
-    const datos = new FormData();
-    datos.append('accion', 'eliminar');
-    datos.append('id', id);
+
+    const datos =
+        new FormData();
+
+
+    datos.append(
+        'accion',
+        'eliminar'
+    );
+
+
+    datos.append(
+        'id',
+        id
+    );
+
 
     try {
-        const respuesta = await fetch(API_URL, {
-            method: 'POST',
-            body: datos
-        });
 
-        const resultado = await respuesta.json();
+        const respuesta =
+            await fetch(
+                API_URL,
+                {
+                    method: 'POST',
+                    body: datos
+                }
+            );
+
+
+        const resultado =
+            await respuesta.json();
+
 
         if (!respuesta.ok) {
-            mostrarToast(resultado.error || 'Ocurrió un error', 'error');
+
+            mostrarToast(
+                resultado.error ||
+                'Ocurrió un error',
+                'error'
+            );
+
             return;
+
         }
 
-        mostrarToast(resultado.mensaje, 'exito');
-        cargarVehiculos();
+
+        mostrarToast(
+            resultado.mensaje ||
+            'Vehículo eliminado correctamente',
+            'exito'
+        );
+
+
+        await cargarVehiculos();
+
 
     } catch (error) {
-        mostrarToast('Error al eliminar el vehiculo', 'error');
+
         console.error(error);
+
+        mostrarToast(
+            'Error al eliminar el vehículo',
+            'error'
+        );
+
     }
+
 }
 
 
 // =====================================================
-// EVENTOS DE APERTURA / CIERRE DEL MODAL
+// EVENTOS
 // =====================================================
 
-btnNuevoVehiculo.addEventListener('click', abrirModalNuevo);
-btnCerrarModal.addEventListener('click', cerrarModal);
-btnCancelar.addEventListener('click', cerrarModal);
+btnNuevoVehiculo.addEventListener(
+    'click',
+    abrirModalNuevo
+);
 
-modalVehiculo.addEventListener('click', (e) => {
-    if (e.target === modalVehiculo) {
-        cerrarModal();
+
+btnCerrarModal.addEventListener(
+    'click',
+    cerrarModal
+);
+
+
+btnCancelar.addEventListener(
+    'click',
+    cerrarModal
+);
+
+
+modalVehiculo.addEventListener(
+    'click',
+    (e) => {
+
+        if (e.target === modalVehiculo) {
+
+            cerrarModal();
+
+        }
+
     }
-});
+);
 
 
 // =====================================================
 // CARGA INICIAL
 // =====================================================
 
-document.addEventListener('DOMContentLoaded', cargarVehiculos);
+cargarVehiculos();

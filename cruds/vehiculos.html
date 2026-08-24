@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administrar Vehículos - Atlas Tours</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../assets/css/crud_destinos.css">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="crud-header">
+
+        <div class="crud-container">
+
+            <div class="logo">
+
+                <h1>Atlas Tours</h1>
+
+                <span>
+                    Administración de vehículos
+                </span>
+
+            </div>
+
+            <nav>
+
+                <a href="../empresa.html">
+                    <i class="fa-solid fa-house"></i>
+                    Inicio
+                </a>
+
+                <a href="destinos.html">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Ver destinos
+                </a>
+
+                <a href="vehiculos.html">
+                    <i class="fa-solid fa-bus"></i>
+                    Ver vehículos
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+    ====================================================== -->
+
+    <main class="crud-container">
+
+        <section class="crud-panel">
+
+            <!-- TITULO Y BOTÓN -->
+
+            <div class="crud-titulo">
+
+                <div>
+
+                    <h2>
+                        Gestión de Vehículos
+                    </h2>
+
+                    <p>
+                        Administra los vehículos turísticos
+                        disponibles en Atlas Tours.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-nuevo"
+                    id="btnNuevoVehiculo">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Nuevo Vehículo
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLA
+            ================================================== -->
+
+            <div class="tabla-contenedor">
+
+                <table class="crud-tabla">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Placa</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Capacidad</th>
+                            <th>Descripción</th>
+                            <th>Imagen</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaBody">
+
+                        <!-- JavaScript cargará los vehículos -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         MODAL NUEVO / EDITAR VEHÍCULO
+    ====================================================== -->
+
+    <div class="modal-overlay" id="modalVehiculo">
+
+        <div class="modal-content">
+
+            <!-- CABECERA -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-etiqueta">
+                        ATLAS TOURS
+                    </span>
+
+                    <h2 id="tituloModal">
+                        Nuevo Vehículo
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-cerrar-modal"
+                    id="btnCerrarModal"
+                    aria-label="Cerrar">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORMULARIO
+            ================================================== -->
+
+            <form id="formVehiculo">
+
+                <!-- ID -->
+
+                <input
+                    type="hidden"
+                    id="id_vehiculo"
+                    name="id_vehiculo">
+
+
+                <!-- PLACA -->
+
+                <div class="campo">
+
+                    <label for="placa">
+
+                        <i class="fa-solid fa-id-card"></i>
+
+                        Placa
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="placa"
+                        name="placa"
+                        placeholder="Ej: ABC123"
+                        maxlength="20"
+                        required>
+
+                </div>
+
+
+                <!-- MARCA -->
+
+                <div class="campo">
+
+                    <label for="marca">
+
+                        <i class="fa-solid fa-car"></i>
+
+                        Marca
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="marca"
+                        name="marca"
+                        placeholder="Ej: Chevrolet"
+                        maxlength="50"
+                        required>
+
+                </div>
+
+
+                <!-- MODELO -->
+
+                <div class="campo">
+
+                    <label for="modelo">
+
+                        <i class="fa-solid fa-calendar"></i>
+
+                        Modelo
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="modelo"
+                        name="modelo"
+                        placeholder="Ej: 2025"
+                        maxlength="50"
+                        required>
+
+                </div>
+
+
+                <!-- CAPACIDAD -->
+
+                <div class="campo">
+
+                    <label for="capacidad">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        Capacidad de pasajeros
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="capacidad"
+                        name="capacidad"
+                        placeholder="Ej: 40"
+                        min="1"
+                        required>
+
+                </div>
+
+
+                <!-- DESCRIPCIÓN -->
+
+                <div class="campo">
+
+                    <label for="descripcion">
+
+                        <i class="fa-solid fa-align-left"></i>
+
+                        Descripción
+
+                    </label>
+
+                    <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        rows="5"
+                        placeholder="Descripción del vehículo..."
+                        required></textarea>
+
+                </div>
+
+
+                <!-- IMAGEN -->
+
+                <div class="campo">
+
+                    <label for="imagen">
+
+                        <i class="fa-solid fa-image"></i>
+
+                        Imagen del vehículo
+
+                    </label>
+
+                    <input
+                        type="file"
+                        id="imagen"
+                        name="imagen"
+                        accept="image/jpeg,image/png,image/webp,image/gif">
+
+                    <!-- Imagen actual al editar -->
+
+                    <input
+                        type="hidden"
+                        id="imagenActual"
+                        name="imagenActual">
+
+                    <!-- Vista previa -->
+
+                    <img
+                        id="previewImagen"
+                        src=""
+                        alt="Vista previa"
+                        style="display:none; max-width:200px; margin-top:10px;">
+
+                </div>
+
+
+                <!-- ESTADO -->
+
+                <div class="campo">
+
+                    <label for="estado">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Estado
+
+                    </label>
+
+                    <select
+                        id="estado"
+                        name="estado"
+                        required>
+
+                        <option value="Activo">
+                            Activo
+                        </option>
+
+                        <option value="Inactivo">
+                            Inactivo
+                        </option>
+
+                        <option value="Mantenimiento">
+                            Mantenimiento
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- BOTONES -->
+
+                <div class="modal-acciones">
+
+                    <button
+                        type="button"
+                        class="btn-cancelar"
+                        id="btnCancelar">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn-guardar">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar Vehículo
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        id="toast"
+        class="toast">
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="../assets/js/crud_vehiculos.js"></script>
+
+</body>
+
+</html>

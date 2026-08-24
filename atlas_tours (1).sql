@@ -110,11 +110,11 @@ CREATE TABLE destinos (
 --TABLA DE VEHICULOS CRUD
 CREATE TABLE vehiculos (
     id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
-    placa VARCHAR(20) NOT NULL,
+    placa VARCHAR(20) NOT NULL UNIQUE,
     marca VARCHAR(50) NOT NULL,
     modelo VARCHAR(50) NOT NULL,
     capacidad INT NOT NULL,
     descripcion TEXT,
-    imagen VARCHAR(255) NOT NULL,
-    estado VARCHAR(20) DEFAULT 'Activo'
-); // sql
+    imagen VARCHAR(255) DEFAULT NULL,
+    estado ENUM('Activo', 'Inactivo', 'Mantenimiento') DEFAULT 'Activo'
+);
