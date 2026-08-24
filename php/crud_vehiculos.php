@@ -914,4 +914,4 @@ responder(
             'Método no permitido'
     ],
     405
-);  
+);

@@ -94,6 +94,63 @@ function guardarImagenDestino(array $archivo): array {
 }
 
 /* ============================================================
+   FUNCIÓN AUXILIAR → guardar la imagen subida de un vehículo
+   Devuelve ['ruta' => '...'] o ['error' => '...']
+   ============================================================ */
+function guardarImagenVehiculo(array $archivo): array {
+    if (!isset($archivo['tmp_name'], $archivo['error'], $archivo['size'], $archivo['name']) ||
+        $archivo['error'] !== UPLOAD_ERR_OK) {
+        return ['error' => 'No se pudo subir la imagen.'];
+    }
+
+    $extensionesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($extension, $extensionesPermitidas, true)) {
+        return ['error' => 'Formato de imagen no permitido. Usa JPG, PNG, WEBP o GIF.'];
+    }
+
+    if ($archivo['size'] > 2 * 1024 * 1024) {
+        return ['error' => 'La imagen no debe superar 2MB.'];
+    }
+
+    if (@getimagesize($archivo['tmp_name']) === false) {
+        return ['error' => 'El archivo no es una imagen válida.'];
+    }
+
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($archivo['tmp_name']);
+    $mimesPermitidos = [
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png'  => 'image/png',
+        'webp' => 'image/webp',
+        'gif'  => 'image/gif'
+    ];
+
+    if (($mimesPermitidos[$extension] ?? '') !== $mime) {
+        return ['error' => 'El tipo real de la imagen no coincide con su extensión.'];
+    }
+
+    $carpetaDestino = __DIR__ . '/assets/img/vehiculos/';
+    if (!is_dir($carpetaDestino) && !mkdir($carpetaDestino, 0755, true) && !is_dir($carpetaDestino)) {
+        return ['error' => 'No se pudo preparar la carpeta de imágenes.'];
+    }
+
+    $nombreArchivo = bin2hex(random_bytes(16)) . '.' . $extension;
+    $rutaCompleta  = $carpetaDestino . $nombreArchivo;
+
+    if (!move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
+        return ['error' => 'No se pudo guardar la imagen en el servidor.'];
+    }
+
+    return [
+        'nombre' => $nombreArchivo,
+        'ruta'   => 'assets/img/vehiculos/' . $nombreArchivo,
+        'archivo'=> $rutaCompleta
+    ];
+}
+
+/* ============================================================
    GET → tipos de documento (para el select de registro)
    URL: Base_De_Datos.php?accion=tipo_documento
    ============================================================ */
@@ -132,6 +189,23 @@ if ($accion === 'listar_destinos') {
     } catch (PDOException $e) {
         error_log('[Atlas Tours] listar_destinos: ' . $e->getMessage());
         echo json_encode(['exito' => false, 'mensaje' => 'No se pudieron cargar los destinos.']);
+    }
+    exit;
+}
+
+/* ============================================================
+   GET → listar vehículos (para la tabla del CRUD)
+   URL: Base_De_Datos.php?accion=listar_vehiculos
+   ============================================================ */
+if ($accion === 'listar_vehiculos') {
+    header('Content-Type: application/json');
+    try {
+        $stmt = $pdo->query("SELECT id_vehiculo, placa, marca, modelo, capacidad, imagen, estado, fecha_creacion
+                              FROM vehiculo ORDER BY id_vehiculo DESC");
+        echo json_encode(['exito' => true, 'vehiculos' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    } catch (PDOException $e) {
+        error_log('[Atlas Tours] listar_vehiculos: ' . $e->getMessage());
+        echo json_encode(['exito' => false, 'mensaje' => 'No se pudieron cargar los vehículos.']);
     }
     exit;
 }
@@ -580,6 +654,225 @@ elseif ($formulario === 'destino_eliminar') {
     } catch (PDOException $e) {
         error_log('[Atlas Tours] destino_eliminar: ' . $e->getMessage());
         echo json_encode(['exito' => false, 'mensaje' => 'No se pudo eliminar el destino.'], JSON_UNESCAPED_UNICODE);
+    }
+}
+
+// --- 8. CREAR VEHÍCULO ---
+elseif ($formulario === 'vehiculo_crear') {
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    if (($_SESSION['rol'] ?? '') !== 'admin') {
+        echo json_encode(['exito' => false, 'mensaje' => 'No autorizado.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $placa     = strtoupper(trim($_POST['placa'] ?? ''));
+    $marca     = trim($_POST['marca'] ?? '');
+    $modelo    = trim($_POST['modelo'] ?? '');
+    $capacidad = filter_input(INPUT_POST, 'capacidad', FILTER_VALIDATE_INT);
+    $estado    = $_POST['estado'] ?? 'Activo';
+
+    if ($placa === '' || $marca === '' || $modelo === '' ||
+        $capacidad === false || $capacidad === null || $capacidad < 1 ||
+        empty($_FILES['imagen']['tmp_name'] ?? '')) {
+        echo json_encode(['exito' => false, 'mensaje' => 'Placa, marca, modelo, capacidad e imagen son obligatorios.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    if (!in_array($estado, ['Activo', 'Inactivo'], true)) {
+        echo json_encode(['exito' => false, 'mensaje' => 'Estado inválido.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    try {
+        $check = $pdo->prepare("SELECT id_vehiculo FROM vehiculo WHERE placa = :placa LIMIT 1");
+        $check->execute([':placa' => $placa]);
+        if ($check->fetch()) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Ya existe un vehículo con esa placa.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    } catch (PDOException $e) {
+        error_log('[Atlas Tours] vehiculo_crear (check placa): ' . $e->getMessage());
+        echo json_encode(['exito' => false, 'mensaje' => 'No se pudo validar la placa.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $resultadoImagen = guardarImagenVehiculo($_FILES['imagen']);
+    if (isset($resultadoImagen['error'])) {
+        echo json_encode(['exito' => false, 'mensaje' => $resultadoImagen['error']], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    try {
+        $stmt = $pdo->prepare("INSERT INTO vehiculo
+            (placa, marca, modelo, capacidad, imagen, estado, fecha_creacion)
+            VALUES (:placa, :marca, :modelo, :capacidad, :imagen, :estado, :fecha)");
+        $stmt->execute([
+            ':placa'     => $placa,
+            ':marca'     => $marca,
+            ':modelo'    => $modelo,
+            ':capacidad' => $capacidad,
+            ':imagen'    => $resultadoImagen['ruta'],
+            ':estado'    => $estado,
+            ':fecha'     => date('Y-m-d')
+        ]);
+
+        echo json_encode([
+            'exito' => true,
+            'mensaje' => 'Vehículo creado correctamente.',
+            'id' => (int)$pdo->lastInsertId()
+        ], JSON_UNESCAPED_UNICODE);
+    } catch (PDOException $e) {
+        @unlink($resultadoImagen['archivo']);
+        error_log('[Atlas Tours] vehiculo_crear: ' . $e->getMessage());
+        echo json_encode(['exito' => false, 'mensaje' => 'No se pudo crear el vehículo.'], JSON_UNESCAPED_UNICODE);
+    }
+}
+
+// --- 9. EDITAR VEHÍCULO ---
+elseif ($formulario === 'vehiculo_editar') {
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    if (($_SESSION['rol'] ?? '') !== 'admin') {
+        echo json_encode(['exito' => false, 'mensaje' => 'No autorizado.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $id        = filter_input(INPUT_POST, 'id_vehiculo', FILTER_VALIDATE_INT);
+    $placa     = strtoupper(trim($_POST['placa'] ?? ''));
+    $marca     = trim($_POST['marca'] ?? '');
+    $modelo    = trim($_POST['modelo'] ?? '');
+    $capacidad = filter_input(INPUT_POST, 'capacidad', FILTER_VALIDATE_INT);
+    $estado    = $_POST['estado'] ?? 'Activo';
+
+    if (!$id || $placa === '' || $marca === '' || $modelo === '' ||
+        $capacidad === false || $capacidad === null || $capacidad < 1) {
+        echo json_encode(['exito' => false, 'mensaje' => 'Faltan datos obligatorios.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    if (!in_array($estado, ['Activo', 'Inactivo'], true)) {
+        echo json_encode(['exito' => false, 'mensaje' => 'Los datos enviados no son válidos.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    try {
+        $buscar = $pdo->prepare("SELECT imagen FROM vehiculo WHERE id_vehiculo = :id LIMIT 1");
+        $buscar->execute([':id' => $id]);
+        $actual = $buscar->fetch(PDO::FETCH_ASSOC);
+
+        if (!$actual) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Vehículo no encontrado.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        // La placa debe seguir siendo única (permitiendo la del propio vehículo)
+        $checkPlaca = $pdo->prepare("SELECT id_vehiculo FROM vehiculo WHERE placa = :placa AND id_vehiculo <> :id LIMIT 1");
+        $checkPlaca->execute([':placa' => $placa, ':id' => $id]);
+        if ($checkPlaca->fetch()) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Ya existe otro vehículo con esa placa.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $nuevaImagen = null;
+        if (!empty($_FILES['imagen']['tmp_name'] ?? '')) {
+            $resultadoImagen = guardarImagenVehiculo($_FILES['imagen']);
+            if (isset($resultadoImagen['error'])) {
+                echo json_encode(['exito' => false, 'mensaje' => $resultadoImagen['error']], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            $nuevaImagen = $resultadoImagen;
+        }
+
+        if ($nuevaImagen) {
+            $stmt = $pdo->prepare("UPDATE vehiculo SET
+                placa = :placa, marca = :marca, modelo = :modelo, capacidad = :capacidad,
+                imagen = :imagen, estado = :estado
+                WHERE id_vehiculo = :id");
+            $stmt->execute([
+                ':placa'     => $placa,
+                ':marca'     => $marca,
+                ':modelo'    => $modelo,
+                ':capacidad' => $capacidad,
+                ':imagen'    => $nuevaImagen['ruta'],
+                ':estado'    => $estado,
+                ':id'        => $id
+            ]);
+
+            if (!empty($actual['imagen'])) {
+                $rutaVieja = __DIR__ . '/' . ltrim($actual['imagen'], '/');
+                if (is_file($rutaVieja) && realpath($rutaVieja) !== realpath($nuevaImagen['archivo'])) {
+                    @unlink($rutaVieja);
+                }
+            }
+        } else {
+            $stmt = $pdo->prepare("UPDATE vehiculo SET
+                placa = :placa, marca = :marca, modelo = :modelo, capacidad = :capacidad,
+                estado = :estado
+                WHERE id_vehiculo = :id");
+            $stmt->execute([
+                ':placa'     => $placa,
+                ':marca'     => $marca,
+                ':modelo'    => $modelo,
+                ':capacidad' => $capacidad,
+                ':estado'    => $estado,
+                ':id'        => $id
+            ]);
+        }
+
+        echo json_encode(['exito' => true, 'mensaje' => 'Vehículo actualizado correctamente.'], JSON_UNESCAPED_UNICODE);
+    } catch (PDOException $e) {
+        if (!empty($nuevaImagen['archivo'])) {
+            @unlink($nuevaImagen['archivo']);
+        }
+        error_log('[Atlas Tours] vehiculo_editar: ' . $e->getMessage());
+        echo json_encode(['exito' => false, 'mensaje' => 'No se pudo actualizar el vehículo.'], JSON_UNESCAPED_UNICODE);
+    }
+}
+
+// --- 10. ELIMINAR VEHÍCULO ---
+elseif ($formulario === 'vehiculo_eliminar') {
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    if (($_SESSION['rol'] ?? '') !== 'admin') {
+        echo json_encode(['exito' => false, 'mensaje' => 'No autorizado.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $id = filter_input(INPUT_POST, 'id_vehiculo', FILTER_VALIDATE_INT);
+
+    if (!$id) {
+        echo json_encode(['exito' => false, 'mensaje' => 'ID inválido.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    try {
+        $buscar = $pdo->prepare("SELECT imagen FROM vehiculo WHERE id_vehiculo = :id LIMIT 1");
+        $buscar->execute([':id' => $id]);
+        $vehiculo = $buscar->fetch(PDO::FETCH_ASSOC);
+
+        if (!$vehiculo) {
+            echo json_encode(['exito' => false, 'mensaje' => 'Vehículo no encontrado.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("DELETE FROM vehiculo WHERE id_vehiculo = :id");
+        $stmt->execute([':id' => $id]);
+
+        if (!empty($vehiculo['imagen'])) {
+            $rutaImagen = __DIR__ . '/' . ltrim($vehiculo['imagen'], '/');
+            if (is_file($rutaImagen)) {
+                @unlink($rutaImagen);
+            }
+        }
+
+        echo json_encode(['exito' => true, 'mensaje' => 'Vehículo eliminado correctamente.'], JSON_UNESCAPED_UNICODE);
+    } catch (PDOException $e) {
+        error_log('[Atlas Tours] vehiculo_eliminar: ' . $e->getMessage());
+        echo json_encode(['exito' => false, 'mensaje' => 'No se pudo eliminar el vehículo.'], JSON_UNESCAPED_UNICODE);
     }
 }
 

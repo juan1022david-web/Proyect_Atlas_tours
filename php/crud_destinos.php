@@ -3,6 +3,11 @@
    API DE DESTINOS - Atlas Tours
    GET  -> lista todos los destinos
    POST -> crear / editar / eliminar (según campo "accion")
+
+   NOVEDAD: ahora la imagen puede venir de dos formas:
+     1) Archivo subido  -> $_FILES['imagen']
+     2) URL de imagen   -> $_POST['imagen_url']
+   Si llega imagen_url, tiene prioridad sobre el archivo.
 ========================================================= */
 
 header('Content-Type: application/json; charset=utf-8');
@@ -44,6 +49,80 @@ function subirImagen($archivo, $carpetaImagenes) {
     return $nombreArchivo;
 }
 
+/**
+ * Valida que la URL de imagen sea una URL bien formada y con extensión de imagen.
+ * NOTA: aquí solo se guarda el link, no se descarga el archivo al servidor.
+ * Si prefieres descargarla y guardarla localmente, revisa la función
+ * descargarImagenDesdeUrl() más abajo (comentada) como alternativa.
+ */
+function validarImagenUrl($url) {
+    $url = trim($url);
+
+    if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        responder(['error' => 'La URL de la imagen no es válida'], 400);
+    }
+
+    $extensionesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    $path = parse_url($url, PHP_URL_PATH);
+    $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+    if (!in_array($extension, $extensionesPermitidas)) {
+        responder(['error' => 'La URL debe apuntar a una imagen (jpg, jpeg, png, webp, gif)'], 400);
+    }
+
+    return $url;
+}
+
+/* ---------------------------------------------------------
+   ALTERNATIVA (opcional): descargar la imagen de la URL y
+   guardarla en el servidor, igual que si fuera subida.
+   Descomenta y úsala en vez de validarImagenUrl() si prefieres
+   tener copia local en lugar de depender del link externo.
+---------------------------------------------------------
+function descargarImagenDesdeUrl($url, $carpetaImagenes) {
+    $url = validarImagenUrl($url);
+
+    $contenido = @file_get_contents($url);
+    if ($contenido === false) {
+        responder(['error' => 'No se pudo descargar la imagen de la URL indicada'], 400);
+    }
+
+    if (strlen($contenido) > 1.5 * 1024 * 1024) {
+        responder(['error' => 'La imagen supera 1.5MB'], 400);
+    }
+
+    $path = parse_url($url, PHP_URL_PATH);
+    $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+    if (!is_dir($carpetaImagenes)) {
+        mkdir($carpetaImagenes, 0755, true);
+    }
+
+    $nombreArchivo = uniqid('destino_') . '.' . $extension;
+    $rutaDestino   = $carpetaImagenes . $nombreArchivo;
+
+    file_put_contents($rutaDestino, $contenido);
+
+    return $nombreArchivo;
+}
+--------------------------------------------------------- */
+
+/**
+ * Resuelve qué imagen usar según lo que llegó en la petición:
+ * URL > archivo subido. Devuelve el valor que se guardará en la BD.
+ */
+function resolverImagen($carpetaImagenes) {
+    if (!empty($_POST['imagen_url'])) {
+        return validarImagenUrl($_POST['imagen_url']);
+    }
+
+    if (!empty($_FILES['imagen']['name'])) {
+        return subirImagen($_FILES['imagen'], $carpetaImagenes);
+    }
+
+    return null;
+}
+
 switch ($metodo) {
 
     /* =====================================================
@@ -54,7 +133,11 @@ switch ($metodo) {
         $destinos = $stmt->fetchAll();
 
         foreach ($destinos as &$d) {
-            $d['imagen'] = $rutaPublicaImagenes . $d['imagen'];
+            // Si ya es una URL completa (http/https), la dejamos tal cual.
+            // Si es un archivo local, le anteponemos la ruta pública.
+            if (!preg_match('/^https?:\/\//i', $d['imagen'])) {
+                $d['imagen'] = $rutaPublicaImagenes . $d['imagen'];
+            }
         }
 
         responder($destinos);
@@ -68,11 +151,11 @@ switch ($metodo) {
 
         if ($accion === 'crear') {
 
-            if (empty($_FILES['imagen']['name'])) {
-                responder(['error' => 'Debes seleccionar una imagen'], 400);
-            }
+            $nombreImagen = resolverImagen($carpetaImagenes);
 
-            $nombreImagen = subirImagen($_FILES['imagen'], $carpetaImagenes);
+            if (!$nombreImagen) {
+                responder(['error' => 'Debes seleccionar una imagen o indicar una URL'], 400);
+            }
 
             $stmt = $pdo->prepare("
                 INSERT INTO destinos (nombre, descripcion, imagen, telefono, estado)
@@ -106,15 +189,18 @@ switch ($metodo) {
             }
 
             $nombreImagen = $actual['imagen'];
+            $imagenNueva  = resolverImagen($carpetaImagenes);
 
-            // Solo se reemplaza la imagen si el usuario subió una nueva
-            if (!empty($_FILES['imagen']['name'])) {
-                $nombreImagen = subirImagen($_FILES['imagen'], $carpetaImagenes);
-
-                $rutaVieja = $carpetaImagenes . $actual['imagen'];
-                if (file_exists($rutaVieja)) {
-                    unlink($rutaVieja);
+            // Solo se reemplaza si el usuario mandó una URL nueva o subió un archivo nuevo
+            if ($imagenNueva) {
+                // Si la imagen anterior era un archivo local (no URL), lo borramos
+                if (!preg_match('/^https?:\/\//i', $actual['imagen'])) {
+                    $rutaVieja = $carpetaImagenes . $actual['imagen'];
+                    if (file_exists($rutaVieja)) {
+                        unlink($rutaVieja);
+                    }
                 }
+                $nombreImagen = $imagenNueva;
             }
 
             $stmt = $pdo->prepare("
@@ -147,7 +233,8 @@ switch ($metodo) {
             $stmt->execute([':id' => $id]);
             $destino = $stmt->fetch();
 
-            if ($destino) {
+            // Solo borramos el archivo físico si NO es una URL externa
+            if ($destino && !preg_match('/^https?:\/\//i', $destino['imagen'])) {
                 $ruta = $carpetaImagenes . $destino['imagen'];
                 if (file_exists($ruta)) {
                     unlink($ruta);
