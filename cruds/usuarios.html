@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administrar Usuarios - Atlas Tours</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../assets/css/crud_destinos.css">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="crud-header">
+
+        <div class="crud-container">
+
+            <div class="logo">
+
+                <h1>Atlas Tours</h1>
+
+                <span>
+                    Administración de usuarios
+                </span>
+
+            </div>
+
+            <nav>
+
+                <a href="../empresa.html">
+                    <i class="fa-solid fa-house"></i>
+                    Inicio
+                </a>
+
+                <a href="destinos.html">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Ver destinos
+                </a>
+
+                <a href="vehiculos.html">
+                    <i class="fa-solid fa-bus"></i>
+                    Ver vehículos
+                </a>
+                <div class="menu-item">
+                    <a href="usuarios.html">
+                        <i class="fa-solid fa-users"></i>
+                        Gestionar usuarios
+                    </a>
+                </div>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+    ====================================================== -->
+
+    <main class="crud-container">
+
+        <section class="crud-panel">
+
+            <!-- TITULO Y BOTÓN -->
+
+            <div class="crud-titulo">
+
+                <div>
+
+                    <h2>
+                        Gestión de Usuarios
+                    </h2>
+
+                    <p>
+                        Administra los usuarios registrados
+                        en Atlas Tours.
+                    </p>
+
+                </div>
+
+                <button type="button" class="btn-nuevo" id="btnNuevoUsuario">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Nuevo Usuario
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLA
+            ================================================== -->
+
+            <div class="tabla-contenedor">
+
+                <table class="crud-tabla">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Tipo doc.</th>
+                            <th>N° Identificación</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Creado</th>
+                            <th>Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaBody">
+
+                        <!-- JavaScript cargará los usuarios -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         MODAL NUEVO / EDITAR USUARIO
+    ====================================================== -->
+
+    <div class="modal-overlay" id="modalUsuario">
+
+        <div class="modal-content">
+
+            <!-- CABECERA -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-etiqueta">
+                        ATLAS TOURS
+                    </span>
+
+                    <h2 id="tituloModal">
+                        Nuevo Usuario
+                    </h2>
+
+                </div>
+
+                <button type="button" class="btn-cerrar-modal" id="btnCerrarModal" aria-label="Cerrar">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORMULARIO
+            ================================================== -->
+
+            <form id="formUsuario">
+
+                <!-- ID -->
+
+                <input type="hidden" id="id_usuario" name="id_usuario">
+
+
+                <!-- NOMBRES -->
+
+                <div class="campo">
+
+                    <label for="nombres">
+
+                        <i class="fa-solid fa-user"></i>
+
+                        Nombres
+
+                    </label>
+
+                    <input type="text" id="nombres" name="nombres" placeholder="Ej: Tatiana" maxlength="100" required>
+
+                </div>
+
+
+                <!-- APELLIDOS -->
+
+                <div class="campo">
+
+                    <label for="apellidos">
+
+                        <i class="fa-solid fa-user"></i>
+
+                        Apellidos
+
+                    </label>
+
+                    <input type="text" id="apellidos" name="apellidos" placeholder="Ej: Losada" maxlength="100"
+                        required>
+
+                </div>
+
+
+                <!-- TIPO DE DOCUMENTO -->
+
+                <div class="campo">
+
+                    <label for="id_tipo_documento">
+
+                        <i class="fa-solid fa-id-card"></i>
+
+                        Tipo de documento
+
+                    </label>
+
+                    <select id="id_tipo_documento" name="id_tipo_documento" required>
+
+                        <option value="">
+                            Seleccione...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- NÚMERO DE IDENTIFICACIÓN -->
+
+                <div class="campo">
+
+                    <label for="numero_identificacion">
+
+                        <i class="fa-solid fa-hashtag"></i>
+
+                        Número de identificación
+
+                    </label>
+
+                    <input type="text" id="numero_identificacion" name="numero_identificacion" placeholder="Ej: 5464565"
+                        maxlength="30" required>
+
+                </div>
+
+
+                <!-- CORREO -->
+
+                <div class="campo">
+
+                    <label for="correo">
+
+                        <i class="fa-solid fa-envelope"></i>
+
+                        Correo
+
+                    </label>
+
+                    <input type="email" id="correo" name="correo" placeholder="Ej: usuario@correo.com" maxlength="150"
+                        required>
+
+                </div>
+
+
+                <!-- TELÉFONO -->
+
+                <div class="campo">
+
+                    <label for="telefono">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        Teléfono
+
+                    </label>
+
+                    <input type="text" id="telefono" name="telefono" placeholder="Ej: 322 7667943">
+
+                </div>
+
+
+                <!-- CONTRASEÑA -->
+
+                <div class="campo">
+
+                    <label for="contrasena" id="labelContrasena">
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        Contraseña
+
+                    </label>
+
+                    <input type="password" id="contrasena" name="contrasena" placeholder="Mínimo 6 caracteres"
+                        autocomplete="new-password">
+
+                    <small id="ayudaContrasena"></small>
+
+                </div>
+
+
+                <!-- BOTONES -->
+
+                <div class="modal-acciones">
+
+                    <button type="button" class="btn-cancelar" id="btnCancelar">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button type="submit" class="btn-guardar">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar Usuario
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div id="toast" class="toast">
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="../assets/js/crud_usuarios.js"></script>
+
+</body>

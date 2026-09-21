@@ -8,7 +8,7 @@ CREATE DATABASE IF NOT EXISTS atlas_tours
 
 USE atlas_tours;
 
--- 1. tipo_documento
+
 CREATE TABLE IF NOT EXISTS tipo_documento (
     id_tipo_documento INT AUTO_INCREMENT PRIMARY KEY,
     tipo              VARCHAR(50) NOT NULL
@@ -20,7 +20,7 @@ INSERT INTO tipo_documento (id_tipo_documento, tipo) VALUES
     (3, 'Pasaporte')
 ON DUPLICATE KEY UPDATE tipo = VALUES(tipo);
 
--- 2. usuario
+
 CREATE TABLE IF NOT EXISTS usuario (
     id_usuario             INT AUTO_INCREMENT PRIMARY KEY,
     nombres                VARCHAR(100) NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS mensaje (
     creado_en      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
---TABLA DE ADMINISTRADORES
+
 CREATE TABLE  admin (
     id_admin   INT AUTO_INCREMENT PRIMARY KEY,
     correo     VARCHAR(255) UNIQUE NOT NULL,
@@ -94,11 +94,11 @@ INSERT INTO admin (correo, contrasena)
 VALUES ('juan1022david@gmail.com', '$2y$10$jfgrJBsp/C6tqPom6.uwh.L9n0a7PSjJQ.7hPfZ3KVfGhbNPAfxBu')
 ON DUPLICATE KEY UPDATE contrasena = VALUES(contrasena);
 
-CREATE TABLE destinos (
+CREATE TABLE destino (
     id_destino      INT AUTO_INCREMENT PRIMARY KEY,
     nombre          VARCHAR(100)        NOT NULL,
     descripcion     TEXT                NOT NULL,
-    imagen          VARCHAR(255)        NOT NULL,   -- ruta o nombre de archivo, NO base64
+    imagen          VARCHAR(255)        NOT NULL,
     telefono        VARCHAR(50)         NULL,
     estado          ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
     fecha_creacion  DATE                NOT NULL DEFAULT (CURRENT_DATE),
@@ -107,7 +107,6 @@ CREATE TABLE destinos (
 ) ENGINE=InnoDB;
 
 
---TABLA DE VEHICULOS CRUD
 CREATE TABLE vehiculos (
     id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
     placa VARCHAR(20) NOT NULL UNIQUE,

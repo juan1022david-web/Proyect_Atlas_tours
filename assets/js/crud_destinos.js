@@ -7,11 +7,18 @@
    ⚠️ AJUSTA ESTA RUTA si tu página del panel no está un nivel
    por debajo de donde vive Base_De_Datos.php
 ----------------------------------------------------------- */
-const BASE_URL   = "../php/Base_De_Datos.php";
-// La imagen que devuelve el backend viene como "assets/img/destinos/xxx.jpg"
-// relativo a la carpeta donde está Base_De_Datos.php (php/). Si BASE_URL
-// cambia, ajusta también este prefijo para que coincida.
-const IMG_PREFIX = "../php/";
+const BASE_URL = "../php/crud_destinos.php";
+
+/*
+ * Base_De_Datos.php devuelve:
+ * assets/img/destinos/nombre.jpg
+ *
+ * Como destinos.html está dentro de /cruds/,
+ * necesitamos subir un nivel:
+ *
+ * /cruds/ + ../assets/
+ */
+const IMG_PREFIX = "../";
 
 // Placeholder de imagen embebido (SVG en base64) — no depende de ningún
 // servicio externo, así que nunca puede fallar con error de conexión.
@@ -68,24 +75,64 @@ function mostrarPreview(src) {
 }
 
 campoImagen.addEventListener("change", () => {
+
     const archivo = campoImagen.files[0];
 
-    if (!archivo) return;
+    if (!archivo) {
+        mostrarPreview("");
+        return;
+    }
 
+    // Verificar que realmente sea una imagen
     if (!archivo.type.startsWith("image/")) {
-        mostrarToast("El archivo debe ser una imagen", "error");
+        mostrarToast("Selecciona un archivo de imagen válido.", "error");
         campoImagen.value = "";
+        mostrarPreview("");
         return;
     }
 
-    if (archivo.size > 2 * 1024 * 1024) {
-        mostrarToast("La imagen es muy pesada (máx. 2MB)", "error");
+    // Máximo 2 MB
+    const MAXIMO = 2 * 1024 * 1024;
+
+    if (archivo.size > MAXIMO) {
+        mostrarToast("La imagen no puede superar los 2 MB.", "error");
         campoImagen.value = "";
+        mostrarPreview("");
         return;
     }
 
+    // Formatos permitidos
+    const formatosPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+    ];
+
+    if (!formatosPermitidos.includes(archivo.type)) {
+        mostrarToast(
+            "Formato no permitido. Usa JPG, PNG, WEBP o GIF.",
+            "error"
+        );
+
+        campoImagen.value = "";
+        mostrarPreview("");
+        return;
+    }
+
+    // Mostrar vista previa
     const lector = new FileReader();
-    lector.onload = () => mostrarPreview(lector.result);
+
+    lector.onload = function (evento) {
+        mostrarPreview(evento.target.result);
+    };
+
+    lector.onerror = function () {
+        mostrarToast("No se pudo leer la imagen.", "error");
+        campoImagen.value = "";
+        mostrarPreview("");
+    };
+
     lector.readAsDataURL(archivo);
 });
 
@@ -236,53 +283,148 @@ function cerrarModal() {
 ========================================================= */
 
 async function guardarDestino(evento) {
+
     evento.preventDefault();
 
-    const id = campoId.value;
-    const esEdicion = Boolean(id);
+    const id = campoId.value.trim();
+    const esEdicion = id !== "";
 
-    if (!esEdicion && !campoImagen.files[0]) {
-        mostrarToast("Debes seleccionar una imagen", "error");
+    // En creación la imagen es obligatoria
+    if (!esEdicion && campoImagen.files.length === 0) {
+        mostrarToast(
+            "Debes seleccionar una imagen para el destino.",
+            "error"
+        );
         return;
     }
 
+    // Si hay una imagen nueva, validar nuevamente
+    if (campoImagen.files.length > 0) {
+
+        const archivo = campoImagen.files[0];
+
+        if (!archivo.type.startsWith("image/")) {
+            mostrarToast("El archivo seleccionado no es una imagen.", "error");
+            return;
+        }
+
+        if (archivo.size > 2 * 1024 * 1024) {
+            mostrarToast("La imagen no puede superar los 2 MB.", "error");
+            return;
+        }
+    }
+
     const formData = new FormData();
-    formData.append("formulario", esEdicion ? "destino_editar" : "destino_crear");
-    formData.append("nombre", campoNombre.value.trim());
-    formData.append("descripcion", campoDescripcion.value.trim());
-    formData.append("telefono", campoTelefono.value.trim());
-    formData.append("estado", campoEstado.value);
+
+    formData.append(
+        "formulario",
+        esEdicion ? "destino_editar" : "destino_crear"
+    );
+
+    formData.append(
+        "nombre",
+        campoNombre.value.trim()
+    );
+
+    formData.append(
+        "descripcion",
+        campoDescripcion.value.trim()
+    );
+
+    formData.append(
+        "telefono",
+        campoTelefono.value.trim()
+    );
+
+    formData.append(
+        "estado",
+        campoEstado.value
+    );
 
     if (esEdicion) {
         formData.append("id_destino", id);
     }
 
-    // Solo se envía el archivo si el usuario eligió uno nuevo
-    if (campoImagen.files[0]) {
-        formData.append("imagen", campoImagen.files[0]);
+    // Solo mandar imagen si seleccionaron una nueva
+    if (campoImagen.files.length > 0) {
+
+        formData.append(
+            "imagen",
+            campoImagen.files[0]
+        );
     }
 
     try {
+
+        mostrarToast(
+            esEdicion
+                ? "Actualizando destino..."
+                : "Subiendo imagen y creando destino...",
+            "exito"
+        );
+
         const respuesta = await fetch(BASE_URL, {
             method: "POST",
             credentials: "same-origin",
             body: formData
         });
 
-        const data = await respuesta.json();
+        // Comprobar HTTP
+        if (!respuesta.ok) {
+            throw new Error(
+                `Error HTTP ${respuesta.status}`
+            );
+        }
+
+        const texto = await respuesta.text();
+
+        let data;
+
+        try {
+            data = JSON.parse(texto);
+        } catch (error) {
+
+            console.error("Respuesta del servidor:", texto);
+
+            throw new Error(
+                "El servidor no devolvió una respuesta JSON válida."
+            );
+        }
 
         if (!data.exito) {
-            mostrarToast(data.mensaje || "No se pudo guardar el destino", "error");
+
+            mostrarToast(
+                data.mensaje ||
+                "No se pudo guardar el destino.",
+                "error"
+            );
+
             return;
         }
 
-        mostrarToast(data.mensaje || "Destino guardado correctamente", "exito");
+        mostrarToast(
+            data.mensaje ||
+            "Destino guardado correctamente.",
+            "exito"
+        );
+
         cerrarModal();
-        renderizarTabla();
+
+        // Volver a cargar la tabla
+        await renderizarTabla();
 
     } catch (error) {
-        console.error(error);
-        mostrarToast("No se pudo conectar con el servidor", "error");
+
+        console.error(
+            "Error al guardar destino:",
+            error
+        );
+
+        mostrarToast(
+            error.message ||
+            "No se pudo conectar con el servidor.",
+            "error"
+        );
     }
 }
 
