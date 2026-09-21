@@ -14,8 +14,17 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config.php';
 
 $metodo               = $_SERVER['REQUEST_METHOD'];
-$carpetaImagenes       = __DIR__ . '/../assets/img/';
-$rutaPublicaImagenes   = '../assets/img/';
+
+// OJO: antes se usaba __DIR__ . '/../assets/img/', que depende de en qué
+// subcarpeta viva este archivo. Si no coincide exactamente con la raíz
+// del proyecto, la imagen se guarda en un sitio y el navegador la busca
+// en otro -> 404. Con DOCUMENT_ROOT apuntamos siempre al mismo lugar,
+// y usamos esa misma base para construir la URL pública.
+if (!defined('RUTA_BASE')) {
+    define('RUTA_BASE', rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/Proyect_Atlas_tours');
+}
+$carpetaImagenes       = RUTA_BASE . '/assets/img/destinos/';
+$rutaPublicaImagenes   = '/Proyect_Atlas_tours/assets/img/destinos/';
 
 function responder($data, $codigo = 200) {
     http_response_code($codigo);
@@ -43,7 +52,13 @@ function subirImagen($archivo, $carpetaImagenes) {
     $rutaDestino   = $carpetaImagenes . $nombreArchivo;
 
     if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
+        error_log('[Atlas Tours] move_uploaded_file falló hacia: ' . $rutaDestino);
         responder(['error' => 'No se pudo guardar la imagen en el servidor'], 500);
+    }
+
+    if (!is_file($rutaDestino)) {
+        error_log('[Atlas Tours] El archivo no existe tras guardarlo: ' . $rutaDestino);
+        responder(['error' => 'La imagen no quedó guardada correctamente en el servidor'], 500);
     }
 
     return $nombreArchivo;

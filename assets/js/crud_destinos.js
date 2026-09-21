@@ -7,7 +7,7 @@
    ⚠️ AJUSTA ESTA RUTA si tu página del panel no está un nivel
    por debajo de donde vive Base_De_Datos.php
 ----------------------------------------------------------- */
-const BASE_URL = "../php/crud_destinos.php";
+const BASE_URL = "../php/Base_De_Datos.php";
 
 /*
  * Base_De_Datos.php devuelve:
@@ -140,7 +140,30 @@ campoImagen.addEventListener("change", () => {
 /* =========================================================
    OBTENER DESTINOS DESDE EL SERVIDOR
 ========================================================= */
+async function obtenerDestinos() {
+    try {
+        const respuesta = await fetch(`${BASE_URL}?accion=listar_destinos`, {
+            method: "GET",
+            credentials: "same-origin"
+        });
 
+        const data = await respuesta.json();
+
+        console.log("Respuesta del servidor:", data);
+
+        if (!data.exito) {
+            mostrarToast(data.mensaje || "No se pudieron cargar los destinos", "error");
+            return [];
+        }
+
+        return data.destinos;
+
+    } catch (error) {
+        console.error(error);
+        mostrarToast("No se pudo conectar con el servidor", "error");
+        return [];
+    }
+}
 async function obtenerDestinos() {
     try {
         const respuesta = await fetch(`${BASE_URL}?accion=listar_destinos`, {

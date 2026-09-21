@@ -15,6 +15,20 @@ $password = '';
 ini_set('display_errors', '0');
 error_reporting(E_ALL);
 
+// ============================================================
+//  RUTA BASE DEL PROYECTO (para guardar/leer imágenes)
+//  OJO: antes se usaba __DIR__, que apunta a la carpeta donde
+//  vive ESTE archivo. Si Base_De_Datos.php no está exactamente
+//  en la raíz del proyecto, las imágenes se guardaban en un
+//  lugar distinto al que el navegador pedía -> 404.
+//  Con DOCUMENT_ROOT + el nombre de la carpeta del proyecto,
+//  siempre apunta al mismo sitio, sin importar desde dónde se
+//  incluya o ejecute este archivo.
+// ============================================================
+if (!defined('RUTA_BASE')) {
+    define('RUTA_BASE', rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/Proyect_Atlas_tours');
+}
+
 try {
     $pdo = new PDO(
         "mysql:host=$host;dbname=$db_name;charset=utf8mb4",
@@ -74,8 +88,9 @@ function guardarImagenDestino(array $archivo): array {
         return ['error' => 'El tipo real de la imagen no coincide con su extensión.'];
     }
 
-    $carpetaDestino = __DIR__ . '/assets/img/destinos/';
+    $carpetaDestino = RUTA_BASE . '/assets/img/destinos/';
     if (!is_dir($carpetaDestino) && !mkdir($carpetaDestino, 0755, true) && !is_dir($carpetaDestino)) {
+        error_log('[Atlas Tours] No se pudo crear la carpeta: ' . $carpetaDestino);
         return ['error' => 'No se pudo preparar la carpeta de imágenes.'];
     }
 
@@ -83,7 +98,15 @@ function guardarImagenDestino(array $archivo): array {
     $rutaCompleta  = $carpetaDestino . $nombreArchivo;
 
     if (!move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
+        error_log('[Atlas Tours] move_uploaded_file falló hacia: ' . $rutaCompleta);
         return ['error' => 'No se pudo guardar la imagen en el servidor.'];
+    }
+
+    // Verificación extra: si por permisos el archivo no quedó realmente
+    // en disco, avisamos aquí en vez de dejar un registro con imagen rota.
+    if (!is_file($rutaCompleta)) {
+        error_log('[Atlas Tours] El archivo no existe tras guardarlo: ' . $rutaCompleta);
+        return ['error' => 'La imagen no quedó guardada correctamente en el servidor.'];
     }
 
     return [
@@ -131,8 +154,9 @@ function guardarImagenVehiculo(array $archivo): array {
         return ['error' => 'El tipo real de la imagen no coincide con su extensión.'];
     }
 
-    $carpetaDestino = __DIR__ . '/assets/img/vehiculos/';
+    $carpetaDestino = RUTA_BASE . '/assets/img/vehiculos/';
     if (!is_dir($carpetaDestino) && !mkdir($carpetaDestino, 0755, true) && !is_dir($carpetaDestino)) {
+        error_log('[Atlas Tours] No se pudo crear la carpeta: ' . $carpetaDestino);
         return ['error' => 'No se pudo preparar la carpeta de imágenes.'];
     }
 
@@ -140,7 +164,13 @@ function guardarImagenVehiculo(array $archivo): array {
     $rutaCompleta  = $carpetaDestino . $nombreArchivo;
 
     if (!move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
+        error_log('[Atlas Tours] move_uploaded_file falló hacia: ' . $rutaCompleta);
         return ['error' => 'No se pudo guardar la imagen en el servidor.'];
+    }
+
+    if (!is_file($rutaCompleta)) {
+        error_log('[Atlas Tours] El archivo no existe tras guardarlo: ' . $rutaCompleta);
+        return ['error' => 'La imagen no quedó guardada correctamente en el servidor.'];
     }
 
     return [
@@ -586,7 +616,7 @@ elseif ($formulario === 'destino_editar') {
             ]);
 
             if (!empty($actual['imagen'])) {
-                $rutaVieja = __DIR__ . '/' . ltrim($actual['imagen'], '/');
+                $rutaVieja = RUTA_BASE . '/' . ltrim($actual['imagen'], '/');
                 if (is_file($rutaVieja) && realpath($rutaVieja) !== realpath($nuevaImagen['archivo'])) {
                     @unlink($rutaVieja);
                 }
@@ -646,7 +676,7 @@ elseif ($formulario === 'destino_eliminar') {
         $stmt->execute([':id' => $id]);
 
         if (!empty($destino['imagen'])) {
-            $rutaImagen = __DIR__ . '/' . ltrim($destino['imagen'], '/');
+            $rutaImagen = RUTA_BASE . '/' . ltrim($destino['imagen'], '/');
             if (is_file($rutaImagen)) {
                 @unlink($rutaImagen);
             }
@@ -804,7 +834,7 @@ elseif ($formulario === 'vehiculo_editar') {
             ]);
 
             if (!empty($actual['imagen'])) {
-                $rutaVieja = __DIR__ . '/' . ltrim($actual['imagen'], '/');
+                $rutaVieja = RUTA_BASE . '/' . ltrim($actual['imagen'], '/');
                 if (is_file($rutaVieja) && realpath($rutaVieja) !== realpath($nuevaImagen['archivo'])) {
                     @unlink($rutaVieja);
                 }
@@ -865,7 +895,7 @@ elseif ($formulario === 'vehiculo_eliminar') {
         $stmt->execute([':id' => $id]);
 
         if (!empty($vehiculo['imagen'])) {
-            $rutaImagen = __DIR__ . '/' . ltrim($vehiculo['imagen'], '/');
+            $rutaImagen = RUTA_BASE . '/' . ltrim($vehiculo['imagen'], '/');
             if (is_file($rutaImagen)) {
                 @unlink($rutaImagen);
             }
