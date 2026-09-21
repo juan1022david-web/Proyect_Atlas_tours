@@ -2,7 +2,7 @@
    CRUD DE USUARIOS - ATLAS TOURS
 ========================================================= */
 
-const API_URL = '../Base_De_Datos.php';
+const API_URL = '../php/crud_usuarios.php';
 
 
 // =====================================================
@@ -142,9 +142,7 @@ async function cargarUsuarios() {
 
     try {
 
-       const respuesta = await fetch(
-        `${API_URL}?accion=listar_usuarios`
-    );
+        const respuesta = await fetch(API_URL);
 
         const texto = await respuesta.text();
 
@@ -190,7 +188,7 @@ async function cargarUsuarios() {
         }
 
 
-        resultado.usuarios.forEach(u => {
+        usuarios.forEach(u => {
 
             const fila = document.createElement('tr');
 
